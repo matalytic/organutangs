@@ -30,8 +30,10 @@ var routerInstance = function(io) {
           if (newMeeting) {
             console.log('updated meeting:', newMeeting);
             res.send();
+            return;
           } else {
             console.log('failed to update meeting');
+            return;
           }
         });
       } else {
@@ -40,9 +42,11 @@ var routerInstance = function(io) {
           if (err) {
             console.error("unicorn User already exists!");
             res.status(401).send('User already exists!');
+            return;
           } else {
             console.log('New meeting saved!');
             res.send();
+            return;
           }
         });
       }
