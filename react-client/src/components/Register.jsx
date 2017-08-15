@@ -41,6 +41,19 @@ class Register extends React.Component {
       console.log("successfully registered");
       console.log(response);
 
+      //auto login user
+      axios.post('/users/login', {
+        username: user,
+        password: pw
+      })
+      .then((response) =>{
+        console.log("responsefrom login ", response);
+        this.props.setAuth(response.data[1]); //FUCK FUCK FUCK
+        this.props.setuserId(response.data[0]);
+      })
+      .catch(function (error) {
+        console.log("error logging in ", error);
+      });
     })
     .catch(function (error) {
       console.log("error response registering from axios");
@@ -49,7 +62,7 @@ class Register extends React.Component {
   }
 
   render() {
-    return ( 
+    return (
     <form className="registerForm" onSubmit={(event)=>{this.register(event, this.state.username, this.state.password, this.state.password2)}}>
       Please enter a username:
       <input className="username" type="text" value={this.state.username} onChange={this.handleChangeName}/>
