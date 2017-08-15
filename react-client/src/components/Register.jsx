@@ -8,6 +8,7 @@ class Register extends React.Component {
       username: '',
       password: '',
       password2: '',
+      msg: ''
     };
     this.handleChangeName = this.handleChangeName.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
@@ -32,6 +33,10 @@ class Register extends React.Component {
 
   register(e, user, pw, pw2) {
     e.preventDefault();
+
+    /** reset error msg */
+    this.setState({msg: ''});
+
     axios.post('/users/register', {
       username: user,
       password: pw,
@@ -39,18 +44,35 @@ class Register extends React.Component {
     })
     .then((response) =>{
       console.log("successfully registered");
-      console.log(response);
+      console.log(response.data);
 
+      /** auto login user */
+      axios.post('/users/login', {
+        username: user,
+        password: pw
+      })
+      .then((response) =>{
+        console.log("responsefrom login ", response);
+        this.props.setAuth(response.data[1]); //FUCK FUCK FUCK
+        this.props.setuserId(response.data[0]);
+      })
+      .catch((error) => {
+        console.log("error logging in ", error.response.data);
+      });
     })
-    .catch(function (error) {
-      console.log("error response registering from axios");
-      console.log(error);
+    .catch( (error) => {
+      console.log(error.response.data);
+      this.setState({msg: error.response.data});
+      setTimeout(() => {
+        this.setState({msg: ''});
+      }, 2000);
     });
   }
 
   render() {
-    return ( 
+    return (
     <form className="registerForm" onSubmit={(event)=>{this.register(event, this.state.username, this.state.password, this.state.password2)}}>
+      <label id="register-error-msg">{this.state.msg}</label>
       Please enter a username:
       <input className="username" type="text" value={this.state.username} onChange={this.handleChangeName}/>
       Please enter a password:

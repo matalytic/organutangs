@@ -11,7 +11,8 @@ class MeetUpForm extends React.Component {
     this.state = {
       friendId: "",
       userLocationAddress: '',
-      status: ''
+      status: '',
+      meetUpTime: ''
     };
 
     this.handleUserChange = this.handleUserChange.bind(this);
@@ -19,6 +20,10 @@ class MeetUpForm extends React.Component {
     this.handleAddressChange = this.handleAddressChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitFriendOrAddress = this.handleSubmitFriendOrAddress.bind(this);
+
+    this.handleMeetUpTime = () => {
+      console.log('handleMeetUpTime clicked');
+    };
   }
 
   componentDidMount() {
@@ -96,7 +101,7 @@ class MeetUpForm extends React.Component {
           });
       })
       .catch(function (error) {
-        alert('error ' + error);
+        console.log('error', error);
       });
   }
 
@@ -106,13 +111,13 @@ class MeetUpForm extends React.Component {
         <table>
           <tbody>
           <tr>
-            <div id="search">
+            <div className="search">
               <p>Your name</p>
               <input type="text" value={ this.props.userId }/>
             </div>
           </tr>
           <tr>
-            <div id="search">
+            <div className="search">
               <p>Enter your location</p>
               <Autocomplete
                 onPlaceSelected={ (place) => {
@@ -124,9 +129,15 @@ class MeetUpForm extends React.Component {
             </div>
           </tr>
           <tr>
-            <div id="search">
+            <div className="search">
               <p>Your friend's name or address</p>
               <input type="text" value={ this.state.friendId } onChange={ this.handleFriendChange } />
+            </div>
+          </tr>
+          <tr>
+            <div className="search">
+              <p>Meet up time</p>
+              <input type="text" value={ this.state.meetUpTime } onChange={ this.handleMeetUpTime } />
             </div>
           </tr>
           <tr>
