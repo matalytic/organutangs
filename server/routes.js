@@ -11,14 +11,44 @@ const yelp = require('./yelp.js');
 var routerInstance = function(io) {
   router.post('/meetings', function (req, res) {
     const { userId, userLocation, friendId } = req.body;
-    var newMeeting = new Meeting({ userId, userLocation, friendId });
-    newMeeting.save((err) => {
-      if (err) {
-        console.error("unicorn", err);
-        res.status(401).send('User already exists!');
+
+    //return if required fields are not found
+    if (!req.body || !userId || !userLocation || !friendId) {
+      console.error("required field(s) not filled");
+      res.status(401).send('required field(s) not filled');
+      return;
+    }
+
+    // update if found;
+    Meeting.findOne({userId: userId}, (err, meeting) => {
+      if (err) console.log('err at finding one meeting');
+      if (meeting) {
+        meeting.userLocation = userLocation;
+        meeting.friendId = friendId;
+        meeting.save((err, newMeeting) => {
+          if (err) console.log('err at saving new meeting');
+          if (newMeeting) {
+            console.log('updated meeting:', newMeeting);
+            res.send();
+            return;
+          } else {
+            console.log('failed to update meeting');
+            return;
+          }
+        });
       } else {
-        console.log('New meeting saved!');
-        res.send();
+        var newMeeting = new Meeting({ userId, userLocation, friendId });
+        newMeeting.save((err) => {
+          if (err) {
+            console.error("unicorn User already exists!");
+            res.status(401).send('User already exists!');
+            return;
+          } else {
+            console.log('New meeting saved!');
+            res.send();
+            return;
+          }
+        });
       }
     });
   });

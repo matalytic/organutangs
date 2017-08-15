@@ -15,6 +15,11 @@ var MeetingSchema = schema({
 
 // pre save hook
 MeetingSchema.pre('save', function(next) {
+  if (!this.userLocation || !this.userLocation.address) {
+    console.log('userLocation not defined before geocodeUrl', this.userLocation);
+    return;
+  }
+
   var APIKEY = config.google.APIKEY;
   var address = encodeURIComponent((this.userLocation.address).trim()); // Replaces spaces in path with %20
   var geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${APIKEY}`;
@@ -26,7 +31,7 @@ MeetingSchema.pre('save', function(next) {
       this.userLocation.coordinates = [ lat, lng ];
       next();
     })
-    .catch((err) => console.log("err", err));
+    .catch((err) => console.log("failed to fetch geocodeUrl"));
 });
 
 var Meeting = mongoose.model('Meeting', MeetingSchema);
