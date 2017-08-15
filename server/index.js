@@ -21,11 +21,14 @@ var routes = require('./routes.js')(io);
 //Middleware
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(session({
-  secret: 'secret',
-  saveUninitialized: true,
-  resave: true
-}));
+
+/** using jwt instead of session */
+// app.use(session({
+//   secret: 'secret',
+//   saveUninitialized: true,
+//   resave: true
+// }));
+require('./passport')(passport);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('combined'));
