@@ -99,12 +99,15 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-//login route
+// login route
 // router.post('/login',
 //   passport.authenticate('local'),
 //   (req, res) => {
-//     res.status(201).send([req.user.username, req.isAuthenticated()]);
-//     res.redirect('/');
+//     res.status(201).json({
+//       username: req.user.username,
+//       auth: true
+//     });
+//     //res.redirect('/');
 //   });
 
 // JWT login
@@ -123,7 +126,8 @@ router.post('/login', (req, res) => {
             success: true,
             username: user.username,
             user_id: user._id,
-            token: token
+            token: token,
+            auth: true
           });
         } else {
           res.status(401).json({
