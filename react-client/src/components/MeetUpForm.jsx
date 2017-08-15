@@ -96,7 +96,7 @@ class MeetUpForm extends React.Component {
           });
       })
       .catch(function (error) {
-        alert('error ' + error);
+        console.log('error', error);
       });
   }
 
