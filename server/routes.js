@@ -12,6 +12,13 @@ var routerInstance = function(io) {
   router.post('/meetings', function (req, res) {
     const { userId, userLocation, friendId } = req.body;
 
+    //return if required fields are not found
+    if (!req.body || !userId || !userLocation || !friendId) {
+      console.error("required field(s) not filled");
+      res.status(401).send('required field(s) not filled');
+      return;
+    }
+
     // update if found;
     Meeting.findOne({userId: userId}, (err, meeting) => {
       if (err) console.log('err at finding one meeting');
@@ -31,7 +38,7 @@ var routerInstance = function(io) {
         var newMeeting = new Meeting({ userId, userLocation, friendId });
         newMeeting.save((err) => {
           if (err) {
-            console.error("unicorn User already exists!", err);
+            console.error("unicorn User already exists!");
             res.status(401).send('User already exists!');
           } else {
             console.log('New meeting saved!');
