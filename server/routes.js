@@ -22,6 +22,7 @@ var routerInstance = function(io) {
           if (err) console.log('err at saving new meeting');
           if (newMeeting) {
             console.log('updated meeting:', newMeeting);
+            res.send();
           } else {
             console.log('failed to update meeting');
           }
