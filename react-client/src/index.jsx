@@ -75,11 +75,13 @@ class App extends React.Component {
             <Title />
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
-          <MeetUpForm userId={this.state.userId}/>
+          <MeetUpForm userId={this.state.userId}
+                      socket = { socket } />
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">
                 <Map
+                  socket = { socket }
                   markers={ this.state.meetingLocations }
                   midpoint={ this.state.midpoint }
                   center={ this.state.center }
