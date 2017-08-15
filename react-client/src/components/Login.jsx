@@ -32,7 +32,7 @@ class Login extends React.Component {
     })
     .then((response) =>{
       console.log("responsefrom login ", response);
-      this.props.setAuth(response.data.auth); //FUCK FUCK FUCK
+      this.props.setAuth(response.data.auth); 
       this.props.setuserId(response.data.username);
       localStorage.clear();
       localStorage.setItem('token', response.data.token);
