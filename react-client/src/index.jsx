@@ -25,6 +25,8 @@ class App extends React.Component {
       center: { "lat": 40.751094, "lng": -73.987597 }
     };
 
+    this.showSignUp = false;
+
     this.setAuth = this.setAuth.bind(this);
     this.setuserId = this.setuserId.bind(this);
     // this.handleClick = this.handleClick.bind(this);
