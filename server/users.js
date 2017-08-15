@@ -17,28 +17,49 @@ router.post('/register', function(req, res) {
   req.checkBody('password', 'Password is required').notEmpty();
   req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
-  req.asyncValidationErrors().then(function() {
-    var newUser = new User({
-      username: username,
-      password: password
-    });
-    User.createUser(newUser, function(err, user) {
-      if (err) {
-        throw err;
-      } else {
-        res.status(201).send();
-      }
-    });
+  /** deprecated */
+  // req.asyncValidationErrors().then(function() {
+  //   var newUser = new User({
+  //     username: username,
+  //     password: password
+  //   });
+  //   User.createUser(newUser, function(err, user) {
+  //     if (err) {
+  //       throw err;
+  //     } else {
+  //       res.status(201).send();
+  //     }
+  //   });
 
     //req.flash('success_msg', 'You are registered and can now login');
 
     //res.redirect('/users/login');
   // all good here
-  }, function(errors) {
-    console.log("ERRR", errors);
-    res.status(404).send("Not found");
-    // damn, validation errors!
-  });
+  // }, function(errors) {
+  //   console.log("ERRR", errors);
+  //   res.status(404).send("Not found");
+  //   // damn, validation errors!
+  // });
+
+  req.getValidationResult()
+    .then( (result) => {
+      if (result.isEmpty()) { /** no errors */
+        var newUser = new User({
+          username: username,
+          password: password
+        });
+        User.createUser(newUser, function(err, user) {
+          if (err) {
+            throw err;
+          } else {
+            res.status(201).send();
+          }
+        });
+      } else { /** errors */
+        console.log(result.array()[0].msg);
+        res.status(400).send(result.array()[0].msg);
+      }
+    })
 });
 
 //middleware neccessary code
