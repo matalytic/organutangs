@@ -16,7 +16,7 @@ body {
     /*background-image: url(https://static.pexels.com/photos/5166/city-road-street-italy.jpg);*/
 }
 
-#container {
+#background {
   height: 100vh;
   width: 100vw;
   background: rgba(0,0,0,0.7);
@@ -26,6 +26,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 #register-error-msg {
@@ -40,14 +41,14 @@ button {
     color: #696969;
 }
 
-/*#container{
+#container{
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
     width: 85%;
     padding-bottom: 30px;
-}*/
+}
 
 table{
     padding-bottom: 15px;

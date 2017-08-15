@@ -8,7 +8,7 @@ const yelp = require('./yelp.js');
 
 var socketInstance = function(io){
   io.on('connection', function (socket) {
-    console.log('a user connected');
+    console.log('a user connected', socket.id);
 
     socket.on('user looking for friend', function (meeting) {
       // Room set-up (rooms are naively set as sorted and joined names e.g. 'alicebob')
