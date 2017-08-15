@@ -17,8 +17,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      auth: false,
-      userId:'',
+      auth: !!localStorage.getItem('username') || false,
+      userId: localStorage.getItem('username') || '',
       // meetingLocations: [],
       meetingLocations: sampleData.sampleData,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
