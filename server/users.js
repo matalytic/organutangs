@@ -5,6 +5,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session');
 var User = require('../database-mongo/models/user');
 
+/** JWT */
+const jwt = require('jsonwebtoken');
+const secret = require('./config').secret;
 
 // Register User
 router.post('/register', function(req, res) {
@@ -96,15 +99,53 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-//login route
-router.post('/login',
-  passport.authenticate('local'),
-  function(req, res) {
-    res.status(201).send([req.user.username, req.isAuthenticated()]);
-    res.redirect('/');
-  });
+// login route
+// router.post('/login',
+//   passport.authenticate('local'),
+//   (req, res) => {
+//     res.status(201).json({
+//       username: req.user.username,
+//       auth: true
+//     });
+//     //res.redirect('/');
+//   });
 
-router.get('/logout', function(req, res){
+// JWT login
+router.post('/login', (req, res) => {
+  User.getUserByUsername(req.body.username, (err, user) => {
+    if (err) throw err;
+    if (user) {
+      User.comparePassword(req.body.password, user.password, (err, isMatch) => {
+        if (err) throw err;
+        if (isMatch) {
+          let token = jwt.sign({
+            id: user._id,
+            username: user.username
+          }, secret, { expiresIn: '1h' });
+          res.json({
+            success: true,
+            username: user.username,
+            user_id: user._id,
+            token: token,
+            auth: true
+          });
+        } else {
+          res.status(401).json({
+            success: false,
+            msg: 'Wrong password'
+          });
+        }
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        msg: `Username ${req.body.username} not found`
+      });
+    }
+  });
+});
+
+router.get('/logout', (req, res) => {
   req.logout();
   res.status(201).send(false);
   //res.redirect('/users/login');

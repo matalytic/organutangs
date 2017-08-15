@@ -17,8 +17,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      auth: false,
-      userId:'',
+      auth: !!localStorage.getItem('username') || false,
+      userId: localStorage.getItem('username') || '',
       // meetingLocations: [],
       meetingLocations: sampleData.sampleData,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
@@ -75,11 +75,13 @@ class App extends React.Component {
             <Title />
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
-          <MeetUpForm userId={this.state.userId}/>
+          <MeetUpForm userId={this.state.userId}
+                      socket = { socket } />
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">
                 <Map
+                  socket = { socket }
                   markers={ this.state.meetingLocations }
                   midpoint={ this.state.midpoint }
                   center={ this.state.center }

@@ -12,14 +12,16 @@ class LogoutButton extends React.Component {
   //set the state of Auth to false from database req.isAuthenticated
   logoutFunc(e) {
     e.preventDefault();
+    localStorage.clear();
     axios.get('/users/logout')
-    .then((res)=>{
-      console.log(res.data);
-      this.props.setAuth(res.data[1]);
-      this.props.setuserId(res.data[0]);
-    }).catch((err)=>{
-      console.log(err);
-    });
+      .then((res)=>{
+        console.log(res.data);
+        this.props.setAuth(res.data[1]);
+        this.props.setuserId(res.data[0]);
+      })
+      .catch((err)=>{
+        console.log(err);
+      });
   }
 
   render() {
