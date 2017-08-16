@@ -1,7 +1,12 @@
-const config = require('./config.js');
-const APIKEY = config.google.APIKEY;
 const axios = require('axios');
+const gmaps = require('./google-maps.js');
+const yelp = require('./yelp.js');
 
+const config = require('./config.js');
+
+const APIKEY = config.google.APIKEY;
+
+// Convert Latitude and Longitude from user's current location to address promise object
 module.exports.LatLngToAddress = (coordinates) => {
   const lat = coordinates.coords.latitude;
   const long = coordinates.coords.longitude;
