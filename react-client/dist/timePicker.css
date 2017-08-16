@@ -98,8 +98,13 @@
   position: relative;
 }
 .rc-time-picker-panel-select-active {
-  overflow-y: auto;
+  overflow-y: scroll;
 }
+
+.rc-time-picker-panel-select-active::-webkit-scrollbar {
+  display:none;
+}
+
 .rc-time-picker-panel-select:first-child {
   border-left: 0;
   margin-left: 0;
