@@ -28,6 +28,33 @@ module.exports.generateMidpoint = (coord1, coord2) => {
     });
 };
 
+module.exports.generatePointsAlong = (coord1, coord2) => {
+  // Make an API request from Google for directions
+  const origin = `${coord1[0]},${coord1[1]}`;
+  const dest = `${coord2[0]},${coord2[1]}`;
+  const APIKEY = config.google.APIKEY;
+
+  const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
+
+  return axios.get(directionsUrl)
+    .then((res) => {
+      // Get the line from point A to point B
+      var polyline = res.data.routes[0].overview_polyline.points;
+      var coordinates = decodePolyline(polyline);
+
+      var step = Math.floor(coordinates.length/15);
+
+      var midIndex = Math.floor(coordinates.length/2);
+      var midpoint = coordinates[midIndex];
+      var pointsAlong = coordinates.filter((point, idx) => idx % step === 0);
+
+      return { pointsAlong, midpoint };
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+};
+
 const decodePolyline = (t, e) => {
   // transforms something like this geocFltrhVvDsEtA}ApSsVrDaEvAcBSYOS_@...
   // to an array of coordinates

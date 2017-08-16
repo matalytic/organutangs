@@ -79,30 +79,66 @@ var routerInstance = function(io) {
             console.log('coordinates2', coordinates2);
 
             // get midpoint
-            gmaps.generateMidpoint(coordinates1, coordinates2)
-              .then((midpoint) => {
-                console.log('Midpoint generated:', midpoint);
-                // Put midpoint in Yelp API
-                yelp.yelpRequest(midpoint)
-                  .then((yelpLocations) => {
-                    // Re-render client
-                    io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
-                    io.sockets.emit('meeting locations', yelpLocations);
+            // gmaps.generateMidpoint(coordinates1, coordinates2)
+            //   .then((midpoint) => {
+            //     console.log('Midpoint generated:', midpoint);
+            //     // Put midpoint in Yelp API
+            //     yelp.yelpRequest(midpoint)
+            //       .then((yelpLocations) => {
+            //         // Re-render client
+            //         io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
+            //         io.sockets.emit('meeting locations', yelpLocations);
 
-                    // formatted as { location1: [lat,lng], location2: [lat, lng] }
-                    io.sockets.emit('user locations', {
-                      location1: { lat: coordinates1[0], lng: coordinates1[1] },
-                      location2: { lat: coordinates2[0], lng: coordinates2[1] }
+            //         // formatted as { location1: [lat,lng], location2: [lat, lng] }
+            //         io.sockets.emit('user locations', {
+            //           location1: { lat: coordinates1[0], lng: coordinates1[1] },
+            //           location2: { lat: coordinates2[0], lng: coordinates2[1] }
+            //         })
+            //       });
+            //   });
+
+              // send all points 
+              gmaps.generatePointsAlong(coordinates1, coordinates2)
+                .then(({ pointsAlong, midpoint }) => {
+                  console.log('Points along generated:', pointsAlong);
+                  // Put midpoint in Yelp API
+                  var mappedYelp = pointsAlong.map(point => {
+                    // points.forEach(point => {
+                    return yelp.yelpRequest(point, 5)
+                      .then((yelpLocations) => {
+                        // Re-render client
+                        console.log('yelp called >>>> ', yelpLocations[0].name);
+                        return yelpLocations;
+                      })
+                  })
+
+                  console.log('mappedYelp', mappedYelp);
+
+                  Promise.all(mappedYelp)
+                    .then((locationsArr) => {
+                      console.log('locations array ', locationsArr);
+                      // MERGE ARRAY OF ARRAYS
+                      var mergedLocations = [].concat.apply([], locationsArr);
+                      // io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
+                        io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
+                        io.sockets.emit('meeting locations', mergedLocations);
+                        // formatted as { location1: [lat,lng], location2: [lat, lng] }
+                        io.sockets.emit('user locations', {
+                          location1: { lat: coordinates1[0], lng: coordinates1[1] },
+                          location2: { lat: coordinates2[0], lng: coordinates2[1] }
+                        })
                     })
-                  });
-              });
+                    .catch((err) => console.log("Error with promise all"), err);
+                  })
+                .catch(err => console.log(err));
+
+
 
             res.send('Results found.');
           })
           .catch((err) => console.log("Err getting geocode from Google API"), err);
       })
       .catch((err) => console.log("Err getting geocode from Google API", err));
-
   });
 
   // TODO Getting the results of the match
@@ -111,7 +147,6 @@ var routerInstance = function(io) {
 
   return router;
 };
-
 
 
 

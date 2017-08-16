@@ -71,9 +71,15 @@ table{
 }
 
 .search > p {
+<<<<<<< HEAD
   display: block;
   font-size: 15px;
   margin: 12px 0 4px 7px;
+=======
+    display: block;
+    font-size: 15px;
+    margin: 12px 0 4px 7px;
+>>>>>>> search along route
 }
 
 input{
