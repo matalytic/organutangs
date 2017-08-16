@@ -422,3 +422,7 @@ input:checked + .slider:before {
   box-shadow: 0 0px 0px 0;
   margin: 5px;
 }
+
+.listing-body > a {
+  text-decoration: none;
+}
