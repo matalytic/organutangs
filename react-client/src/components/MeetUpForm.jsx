@@ -65,10 +65,12 @@ class MeetUpForm extends React.Component {
       var userId = this.props.userId;
       var location1 = { "address" : this.state.userLocationAddress, "coordinates": [0,0] };
       var location2 = { "address": this.state.friendId, "coordinates": [0,0] };
+      const arrivalTime = this.state.arrivalTime.utc().valueOf();
       axios.post('/two-locations', {
         userId,
         location1,
-        location2
+        location2,
+        arrivalTime
       }).then((res) => {
         // do something with the res
         this.setState({ status : 'Results found.' });

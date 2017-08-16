@@ -56,7 +56,8 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
       var midpoint = coordinates[midIndex];
       var pointsAlong = coordinates.filter((point, idx) => idx % step === 0);
 
-      return { pointsAlong, midpoint };
+      const departure_time = res.data.routes[0].legs[0].departure_time;
+      return { pointsAlong, midpoint, departure_time };
     })
     .catch((err) => {
       console.error(err);

@@ -54,7 +54,7 @@ var routerInstance = function(io) {
   });
 
   router.post('/two-locations', function(req, res) {
-    const { userId, location1, location2 } = req.body;
+    const { userId, location1, location2, arrivalTime } = req.body;
     var APIKEY = config.google.APIKEY;
 
     var address1 = encodeURIComponent((location1.address).trim()); // Replaces spaces in path with %20
@@ -97,8 +97,8 @@ var routerInstance = function(io) {
             //       });
             //   });
 
-            // send all points 
-            gmaps.generatePointsAlong(coordinates1, coordinates2)
+            // send all points
+            gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime)
               .then(({ pointsAlong, midpoint }) => {
                 // Generate midpoint locations with higher search radius
                 yelp.yelpRequest(midpoint, 10)
