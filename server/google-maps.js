@@ -42,7 +42,7 @@ module.exports.generatePointsAlong = (coord1, coord2) => {
       var polyline = res.data.routes[0].overview_polyline.points;
       var coordinates = decodePolyline(polyline);
 
-      var step = Math.floor(coordinates.length/15);
+      var step = Math.floor(coordinates.length/16);
 
       var midIndex = Math.floor(coordinates.length/2);
       var midpoint = coordinates[midIndex];
