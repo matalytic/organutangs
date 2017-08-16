@@ -31,7 +31,7 @@ app.use(passport.session());
 require('./passport')(passport);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(morgan('combined'));
+// app.use(morgan('combined'));
 
 // Express Validator (displays errors when logging in)
 app.use(expressValidator({
