@@ -53,8 +53,12 @@ class Register extends React.Component {
       })
       .then((response) =>{
         console.log("responsefrom login ", response);
-        this.props.setAuth(response.data[1]); //FUCK FUCK FUCK
-        this.props.setuserId(response.data[0]);
+        this.props.setAuth(response.data.auth);
+        this.props.setuserId(response.data.username);
+        localStorage.clear();
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('username', response.data.username);
+        localStorage.setItem('user_id', response.data.user_id);
       })
       .catch((error) => {
         console.log("error logging in ", error.response.data);
