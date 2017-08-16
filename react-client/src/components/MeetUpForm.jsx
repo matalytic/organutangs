@@ -5,6 +5,7 @@ import Autocomplete from 'react-google-autocomplete';
 import moment from 'moment';
 // import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
+import { LatLngToAddress } from '../../../server/utils';
 
 class MeetUpForm extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ class MeetUpForm extends React.Component {
       meetUpTime: moment(),
       leaveBy: moment()
     };
-
+    this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleFriendChange = this.handleFriendChange.bind(this);
     this.handleAddressChange = this.handleAddressChange.bind(this);
@@ -34,6 +35,19 @@ class MeetUpForm extends React.Component {
   }
 
   componentDidMount() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log(position);
+          LatLngToAddress(position)
+            .then((location) => {
+              console.log(location.data.results[0].formatted_address);
+              this.setState({ userLocationAddress:location.data.results[0].formatted_address })
+          })
+        });
+    } else {
+        console.log('Could not get geolocation');
+    }
+
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
     });
@@ -97,7 +111,6 @@ class MeetUpForm extends React.Component {
       "address" : this.state.userLocationAddress,
       "coordinates": [0,0]
     };
-
     // this.setState({ status: 'Looking for your friend...'});
 
     axios.post('/meetings', {
@@ -118,6 +131,21 @@ class MeetUpForm extends React.Component {
       });
   }
 
+  getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log(position);
+          LatLngToAddress(position)
+            .then((location) => {
+              console.log(location.data.results[0].formatted_address);
+              this.setState({ userLocationAddress:location.data.results[0].formatted_address })
+          })
+        });
+    } else {
+        console.log('Could not get geolocation');
+    }
+  }
+
   render(){
     return (
       <div>
@@ -135,19 +163,28 @@ class MeetUpForm extends React.Component {
             <div className="search">
               <p>Enter your location</p>
               <Autocomplete
+                value={this.state.userLocationAddress}
                 onPlaceSelected={ (place) => {
                   this.setState({ userLocationAddress: place.formatted_address })
                 } }
                 types={['address']}
                 onChange={ this.handleAddressChange }
               />
+              <button className="location" onClick={ this.getCurrentLocation } >Use Current Location</button>
             </div>
           </tr>
 
           <tr>
             <div className="search">
               <p>Your friend's name or address</p>
-              <input type="text" value={ this.state.friendId } onChange={ this.handleFriendChange } />
+              <Autocomplete
+                placeholder="Enter a friend or location"
+                value={ this.state.friendId }
+                onPlaceSelected={ (place) => {
+                  this.setState({ friendId: place.formatted_address })
+                } }
+                types={['address']}
+                onChange={ this.handleFriendChange } />
             </div>
           </tr>
 
