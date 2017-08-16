@@ -44,7 +44,7 @@ button {
   color: #696969;
 }
 
-#app > div, #app > div > div {
+#container {
   /*padding-right: 15px;
   padding-left: 15px;
   margin-right: auto;
@@ -55,8 +55,6 @@ button {
   align-items: center;
   justify-content: center;
   flex-direction: column;*/
-  height: 100%;
-  width: 100%;
 }
 
 #app > div > div > * , #app > div > div > div.resultsContainer > * {
