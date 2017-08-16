@@ -13,7 +13,8 @@ class MeetUpForm extends React.Component {
       friendId: "",
       userLocationAddress: '',
       status: '',
-      meetUpTime: moment()
+      meetUpTime: moment(),
+      leaveBy: moment()
     };
 
     this.handleUserChange = this.handleUserChange.bind(this);
@@ -166,7 +167,7 @@ class MeetUpForm extends React.Component {
 
           <tr>
             <div className="search">
-              <p>Leave by: {}</p>
+              <p>Leave by: {this.state.leaveBy.local().format('h:mm A')}</p>
             </div>
           </tr>
 
