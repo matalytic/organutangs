@@ -35,6 +35,13 @@ class ChatContainer extends React.Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    // Clear the chat when Join button is clicked
+    if (nextProps.midpoint === null) {
+      this.setState({chatMessagesDisplay: []});
+    }
+  }
+
   handleSubmitMessage(e) {
 
     e.preventDefault();
@@ -47,13 +54,25 @@ class ChatContainer extends React.Component {
       message: this.chatMessageInput.value
     });
 
+    // clear chat input
+    e.target.reset();
   }
 
   render() {
+    let chatTitle = '';
+
+    // when the Join button is clicked, midpoint will be null
+    if (this.props.midpoint === null ) {
+      // reset chat
+      chatTitle = 'Waiting for friend...';
+
+    } else {
+      chatTitle = 'Chat';
+    }
 
     return (
       <div id="chatContainer">
-        <span>test</span>
+        <div>{ chatTitle }</div>
         <div className="chatMessageDisplay">
           { (this.state.chatMessagesDisplay).map((item, i) => (
               <p key={i}>{ item }</p>
@@ -66,6 +85,7 @@ class ChatContainer extends React.Component {
         </form>
       </div>
     )
+
   }
 }
 
