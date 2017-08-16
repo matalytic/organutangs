@@ -6,7 +6,7 @@ class ChatContainer extends React.Component {
 
     this.state = { 
       status : '',
-      message: ''
+      chatMessagesDisplay: []
     };
   }
 
@@ -15,6 +15,15 @@ class ChatContainer extends React.Component {
     this.props.socket.on('match status', (data) => {
       console.log('[ChatContainer] SOCKET data.', data);
       this.setState({ status : data });
+    });
+
+    this.props.socket.on('chat', (chatData) => {
+      let newChatMessage = `${chatData.username}: ${chatData.message}`;
+      let chatsArray = this.state.chatMessagesDisplay;
+      console.log('type of chatsarray', typeof chatsArray, chatsArray);
+      chatsArray.push(newChatMessage);
+      console.log('type of chatsarray', typeof chatsArray, chatsArray);
+      this.setState({ chatMessagesDisplay: chatsArray });
     });
   }
 
@@ -36,6 +45,10 @@ class ChatContainer extends React.Component {
       <div id="chatContainer">
         <span>test</span>
         <div className="chatMessageDisplay">
+          { (this.state.chatMessagesDisplay).map((item, i) => (
+              <p key={i}>{ item }</p>
+            )
+          )}
         </div>
         <form id="chatForm" onSubmit={ (e) => this.handleSubmitMessage(e) }>
           <input className="chatMessageInput" type="text" ref={ (input) => { this.chatMessageInput = input; } }/>

@@ -10,10 +10,13 @@ var socketInstance = function(io){
   io.on('connection', function (socket) {
     console.log('a user connected', socket.id);
 
-    // Set up socket for chat
+    // Socket set up for chat
     
-    socket.on('chat', function(data) {
-      console.log('Chat msg gotten on server:', data);
+    socket.on('chat', function(chatData) {
+      console.log('Chat msg gotten on server:', chatData);
+
+      // Broadcast any chat to other connections
+      io.emit('chat', chatData);
 
     });
 
