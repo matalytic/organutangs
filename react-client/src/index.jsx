@@ -62,7 +62,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    socket.on('meeting locations', (data) => {
+    socket.on('mid meeting locations', (data) => {
       this.setState({ meetingLocations: data });
     });
 

@@ -141,7 +141,13 @@ class MeetUpForm extends React.Component {
           </tr>
           <tr>
             <button className="submit" onClick={this.handleSubmitFriendOrAddress}>Join</button>
-            <input onChange={ this.props.handleAllLocationsToggle } type="checkbox" />
+            <div id="toggle-btn-container">
+              <p>Show All Locations</p>
+              <label className="switch search">
+                <input type="checkbox" onChange={ this.props.handleAllLocationsToggle } />
+                <span className="slider round"></span>
+              </label>
+            </div>
           </tr>
           <p className="messageText">{ this.state.status }</p>
           </tbody>
