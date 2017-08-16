@@ -6,23 +6,31 @@ class ChatContainer extends React.Component {
 
     this.state = { 
       status : '',
-      chatMessagesDisplay: []
+      chatMessagesDisplay: [],
+      matchRoom: ''
     };
   }
 
   componentDidMount() {
     console.log('[ChatContainer] mounted.');
+
+    // if there is a match, the socket will let us know the room and the status message
     this.props.socket.on('match status', (data) => {
-      console.log('[ChatContainer] SOCKET data.', data);
-      this.setState({ status : data });
+
+      console.log('[Chat listen on matchstatus]. SOCKET data.', data);
+
+      this.setState({ status : data.statusMessage });
+      this.setState({ matchRoom: data.matchRoom });
     });
 
+    // Listen for the room's chat data
     this.props.socket.on('chat', (chatData) => {
+      console.log('[Chat listen on chat]. CLIENT RECEIVE CHAT Broadcast', chatData);
+
       let newChatMessage = `${chatData.username}: ${chatData.message}`;
       let chatsArray = this.state.chatMessagesDisplay;
-      console.log('type of chatsarray', typeof chatsArray, chatsArray);
       chatsArray.push(newChatMessage);
-      console.log('type of chatsarray', typeof chatsArray, chatsArray);
+      // console.log('[Chat listen on chat]. updateChatsArray:', chatsArray);
       this.setState({ chatMessagesDisplay: chatsArray });
     });
   }
@@ -31,8 +39,10 @@ class ChatContainer extends React.Component {
 
     e.preventDefault();
 
+    console.log('click send. should go to room', this.state.matchRoom);
+
     // Send the message data to server via socket
-    this.props.socket.emit('chat', {
+    this.props.socket.emit(this.state.matchRoom, {
       username: this.props.userId,
       message: this.chatMessageInput.value
     });

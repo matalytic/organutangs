@@ -10,31 +10,17 @@ var socketInstance = function(io){
   io.on('connection', function (socket) {
     console.log('a user connected', socket.id);
 
-    // Socket set up for chat
-    
-    socket.on('chat', function(chatData) {
-      console.log('Chat msg gotten on server:', chatData);
-
-      // Broadcast any chat to other connections
-      io.emit('chat', chatData);
-
-    });
-
-    // Socket set up for match
-
+    // Server is listening to 'user looking' from client. then creates a new room which is joined
     socket.on('user looking for friend', function (meeting) {
       // Room set-up (rooms are naively set as sorted and joined names e.g. 'alicebob')
       var sortedPair = [meeting.friendId, meeting.userId].sort();
-      var room = sortedPair.join('');
+      var matchRoom = sortedPair.join('');
 
-      socket.join(room, function() {
-        console.log('room joined ---->', room);
+      socket.join(matchRoom, function() {
+        console.log('hit Join, now looking & room joined is ---->', matchRoom);
 
-        // emit this globally to listen to match...
-        socket.emit('match status', 'Looking for your friend...');
-
-        // emit only to the room where you are at, to notify that you(rself) are looking
-        socket.to(room).emit('match status', 'Looking for your friend...');
+        // Emit only to the room where you are at, to notify that you(rself) are looking
+        socket.to(matchRoom).emit('match status', { statusMessage: 'Looking for your friend...'});
 
         // search database Meeting table to find a meeting where the userID is YOUR FRIEND, 
         // and the friendID is YOURSELF (which means your friend is also looking)
@@ -46,10 +32,16 @@ var socketInstance = function(io){
             if (doc) {
               // Match found! Insert match into the db.
               // socket.broadcast.emit('match status', 'found');
-              console.log('Found a match');
-              console.log('socket.rooms', socket.rooms);
-              socket.emit('match status', 'Your match was found!');
-              socket.to(room).emit('match status', 'Your match was found!');
+              console.log('Found a match--> socket.rooms', socket.rooms[matchRoom]);
+              
+              socket.emit('match status', {
+                statusMessage: 'Your match was found!',
+                matchRoom: matchRoom
+              });
+              socket.to(matchRoom).emit('match status', {
+                statusMessage: 'Your match was found!',
+                matchRoom: matchRoom
+              });
 
               // the Match db entity is created here but not saved to db
               var newMatch = new Match({
@@ -83,18 +75,32 @@ var socketInstance = function(io){
                           io.sockets.emit('user locations', {
                             location1: { lat: userLocation.coordinates[0], lng: userLocation.coordinates[1] },
                             location2: { lat: friendLocation.coordinates[0], lng: friendLocation.coordinates[1] }
-                          })
+                          });
                         });
                     });
                 });
 
             } else {
               console.log(`User ${meeting.friendId} and Friend ${meeting.userId} match not found in db.`);
-              // TODO somehow print "Looking for your friend"
-              console.log('room', room);
-              socket.to(room).emit('match status', 'Looking for your friend.');
+
+              console.log('room', matchRoom);
+              socket.to(matchRoom).emit('match status', {
+                statusMessage: 'Looking for your friend.',
+                matchRoom: matchRoom
+              });
             }
           }); // End meeting.findOne
+
+
+          // Set up additional socket listening for particular matchRoom
+
+          socket.on(matchRoom, function(chatData) {
+            console.log('Chat msg gotten on server:', chatData, 'on matchroom', matchRoom);
+
+            // Broadcast chat to this room only to all users including sender
+            io.sockets.in(matchRoom).emit('chat', chatData);
+          });
+
       }); // End socket.join room
     }); // End socket on
 
