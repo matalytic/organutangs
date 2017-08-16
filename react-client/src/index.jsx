@@ -10,7 +10,8 @@ import sampleData from './sampleData.js';
 import LogoutButton from './components/LogoutButton.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
-import io from 'socket.io-client';
+import ChatContainer from './components/ChatContainer.jsx'
+const io = require('socket.io-client');
 const socket = io();
 
 class App extends React.Component {
@@ -90,8 +91,10 @@ class App extends React.Component {
             <Title />
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
+          <ChatContainer userId={this.state.userId}
+                         socket={ socket } />
           <MeetUpForm userId={this.state.userId}
-                      socket = { socket } 
+                      socket = { socket }
                       handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } />
           <div className="resultsContainer">
             <div className= "mapBox" >
