@@ -97,11 +97,6 @@ input {
   padding: 6px 6px 6px 8px;
 }
 
-/* time selector */
-.rc-time-picker-panel-select li {
-  font-size: 20px;
-}
-
 /*#search > input {*/
 /*display: inline-block;*/
 /*width: 490px;*/
@@ -253,7 +248,7 @@ div.mapBox > div > div > div > div > div > div > div > div > div > div > div > d
   height: 100%;
 }
 
-input.submit, button.submit {
+input.submit, button.submit, #time-picker-in {
   width: 70px;
   border-radius: 5px;
   display: inline-block;
@@ -291,4 +286,21 @@ input.submit, button.submit {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* time selector */
+/*#time-picker, .rc-time-picker-panel-select li {
+  font-size: 20px;
+}*/
+
+button.submit-time {
+  width: 100px;
+  margin: 10px;
+}
+
+#time-picker-in {
+  margin: 10px;
+  font-size: 18px;
+  width: auto;
+  font-style: bold;
 }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import Title from './Title.jsx';
 import Autocomplete from 'react-google-autocomplete';
 import moment from 'moment';
-import 'rc-time-picker/assets/index.css';
+// import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
 
 class MeetUpForm extends React.Component {
@@ -13,7 +13,7 @@ class MeetUpForm extends React.Component {
       friendId: "",
       userLocationAddress: '',
       status: '',
-      meetUpTime: ''
+      meetUpTime: moment()
     };
 
     this.handleUserChange = this.handleUserChange.bind(this);
@@ -25,12 +25,18 @@ class MeetUpForm extends React.Component {
     this.handleMeetUpTime = () => {
       console.log('handleMeetUpTime clicked');
     };
+
+    this.handleSubmitTime = (minutes) => {
+      console.log(this.state.meetUpTime);
+      this.setState({ meetUpTime: this.state.meetUpTime.add(minutes, 'minutes') });
+    };
   }
 
   componentDidMount() {
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data });
     });
+    this.setState({ meetUpTime: moment() });
   }
 
   handleUserChange(event) {
@@ -138,15 +144,18 @@ class MeetUpForm extends React.Component {
           <tr>
             <div className="search">
               <p>Meet up time</p>
+              <row id="time-picker">
                 <TimePicker
-                  style={{ width: 70, fontSize: '20' }}
                   showSecond={false}
-                  defaultValue={moment()}
+                  defaultValue={this.state.meetUpTime}
                   className="meet-up-time"
                   onChange={this.handleMeetUpTime}
                   use12Hours
+                  value={this.state.meetUpTime}
                 />
-              {/* <input type="text" value={ this.state.meetUpTime } onChange={ this.handleMeetUpTime } /> */}
+                <span id="time-picker-in">add</span>
+                <button className="submit submit-time" onClick={() => this.handleSubmitTime(10)}>10 Minutes</button>
+              </row>
             </div>
           </tr>
           <tr>
