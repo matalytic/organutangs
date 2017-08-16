@@ -21,6 +21,8 @@ class App extends React.Component {
       userId: localStorage.getItem('username') || '',
       // meetingLocations: [],
       meetingLocations: sampleData.sampleData,
+      allMeetingLocations: sampleData.sampleData,
+      displayAllLocations: false,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
       center: { "lat": 40.751094, "lng": -73.987597 }
     };
@@ -50,9 +52,22 @@ class App extends React.Component {
     this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} })
   };
 
+  handleAllLocationsToggle() {
+    this.setState({displayAllLocations : !this.state.displayAllLocations})
+    console.log('handleAllLocationsToggle clicked');
+  }
+
+  toggleLocations() {
+    return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations
+  }
+
   componentDidMount() {
-    socket.on('meeting locations', (data) => {
+    socket.on('mid meeting locations', (data) => {
       this.setState({ meetingLocations: data });
+    });
+
+    socket.on('all meeting locations', (data) => {
+      this.setState({ allMeetingLocations: data });
     });
 
     socket.on('match status', (data) => {
@@ -76,13 +91,14 @@ class App extends React.Component {
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
           <MeetUpForm userId={this.state.userId}
-                      socket = { socket } />
+                      socket = { socket } 
+                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } />
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">
                 <Map
                   socket = { socket }
-                  markers={ this.state.meetingLocations }
+                  markers={ this.toggleLocations() }
                   midpoint={ this.state.midpoint }
                   center={ this.state.center }
                   containerElement={<div style={{height:100+'%'}} />}
@@ -92,7 +108,7 @@ class App extends React.Component {
               </div>
             </div>
             <div className="listContainer">
-              <List handleClick={this.handleListClick.bind(this)} items={this.state.meetingLocations}/>
+              <List handleClick={this.handleListClick.bind(this)} items={ this.toggleLocations() }/>
             </div>
           </div>
         </div>

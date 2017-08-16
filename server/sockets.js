@@ -46,25 +46,57 @@ var socketInstance = function(io){
                 .exec(function (err, doc) {
                   var userLocation = doc.userLocation;
 
-                  gmaps.generateMidpoint(userLocation.coordinates, friendLocation.coordinates)
-                    .then((midpoint) => {
-                      console.log('Midpoint generated:', midpoint);
-
-                      yelp.yelpRequest(midpoint)
+                  gmaps.generatePointsAlong(userLocation.coordinates, friendLocation.coordinates)
+                    .then(({ pointsAlong, midpoint }) => {
+                      // Generate midpoint locations with higher search radius
+                      yelp.yelpRequest(midpoint, 10)
                         .then((yelpLocations) => {
-                          // Re-render client
-
-                          // push to the beginning of yelpLocations
-                          // var md = { coordinates: midpoint };
-                          // yelpLocations.unshift(md);
                           io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
-                          io.sockets.emit('meeting locations', yelpLocations);
+                          io.sockets.emit('mid meeting locations', yelpLocations);
+                          // formatted as { location1: [lat,lng], location2: [lat, lng] }
                           io.sockets.emit('user locations', {
                             location1: { lat: userLocation.coordinates[0], lng: userLocation.coordinates[1] },
-                            location2: { lat: friendLocation.coordinates[0], lng: friendLocation.coordinates[1] }
-                          })
+                            location2: { lat: friendLocation.coordinates[0], lng: friendLocation.coordinates[1] },
+                          });
                         });
-                    });
+                      const mappedYelp = pointsAlong.map((point) => {
+                        
+                        return yelp.yelpRequest(point, 3)
+                          .then((yelpLocations) => {
+                            // Re-render client
+                            return yelpLocations;
+                          });
+                      });
+                      // Generate all restaurants along the path
+                      Promise.all(mappedYelp)
+                        .then((locationsArr) => {
+                          // MERGE ARRAY OF ARRAYS
+                          const allMeetingLocations = [].concat.apply([], locationsArr);
+                          io.sockets.emit('all meeting locations', allMeetingLocations );
+                        })
+                        .catch(err => console.log("Error with promise all"), err);
+                    })
+                    .catch(err => console.log(err));
+
+                  // gmaps.generateMidpoint(userLocation.coordinates, friendLocation.coordinates)
+                  //   .then((midpoint) => {
+                  //     console.log('Midpoint generated:', midpoint);
+
+                  //     yelp.yelpRequest(midpoint)
+                  //       .then((yelpLocations) => {
+                  //         // Re-render client
+
+                  //         // push to the beginning of yelpLocations
+                  //         // var md = { coordinates: midpoint };
+                  //         // yelpLocations.unshift(md);
+                  //         io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
+                  //         io.sockets.emit('mid meeting locations', yelpLocations);
+                  //         io.sockets.emit('user locations', {
+                  //           location1: { lat: userLocation.coordinates[0], lng: userLocation.coordinates[1] },
+                  //           location2: { lat: friendLocation.coordinates[0], lng: friendLocation.coordinates[1] }
+                  //         })
+                  //       });
+                  //   });
                 });
 
             } else {
