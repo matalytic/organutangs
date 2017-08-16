@@ -153,8 +153,9 @@ class MeetUpForm extends React.Component {
                   use12Hours
                   value={this.state.meetUpTime}
                 />
-                <span id="time-picker-in">add</span>
-                <button className="submit submit-time" onClick={() => this.handleSubmitTime(10)}>10 Minutes</button>
+                {/* <span id="time-picker-in">add</span> */}
+                <button className="submit submit-time" onClick={() => this.handleSubmitTime(10)}>+10 Minutes</button>
+                <button className="submit submit-time" onClick={() => this.handleSubmitTime(-10)}>-10 Minutes</button>
               </row>
             </div>
           </tr>
