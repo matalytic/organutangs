@@ -373,36 +373,50 @@ input:checked + .slider:before {
 }
 
 #chatContainer {
-    float: right;
-    height: 400px;
-    width: 400px;
-    background: orange;
-    border: 1px solid blue;
+  display: flex;
+  position: absolute;
+  left: 500px;
+  height: 400px;
+  width: 400px;
+  background: orange;
+  /*border: 1px solid blue;*/
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .chatMessageDisplay {
-    height: 320px;
-    background: gray;
-    width: 100%;
-    overflow: scroll;
+  height: 320px;
+  background: gray;
+  width: 370px;
+  overflow-y: scroll;
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-radius: 10px;
+}
+
+.chatMessageDisplay::-webkit-scrollbar {
+  display:none;
 }
 
 #chatForm {
-    width: 100%;
-    text-align: center;
-    box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
 
 }
 .chatMessageInput {
-    width: 80%;
-    height: 16px;
-    border: none;
-    box-shadow: 0 0px 0px 0;
-    vertical-align: middle;
+  width: 75%;
+  height: 16px;
+  border: none;
+  box-shadow: 0 0px 0px 0;
+  vertical-align: middle;
 }
 .chatSendButton {
-    width: 12%;
-    vertical-align: middle;
-    font-size: 12px;
-    box-shadow: 0 0px 0px 0;
+  width: 12%;
+  vertical-align: middle;
+  font-size: 12px;
+  box-shadow: 0 0px 0px 0;
+  margin: 5px;
 }
