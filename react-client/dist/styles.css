@@ -1,4 +1,4 @@
-* {
+body {
   margin: 0;
   padding: 0;
   /*font-size: 20px;*/
@@ -42,7 +42,9 @@ button {
   background-color: #e0e0e0;
   border: 1px solid rgb(175, 175, 175);
   color: #696969;
+  cursor: pointer;
 }
+
 
 #container {
   /*padding-right: 15px;
@@ -66,26 +68,38 @@ table{
 }
 
 #title{
-  font-size: 26px;
+  font-size: 36px;
   margin-bottom: 15px;
 }
 
 .search > p {
   display: block;
-  font-size: 15px;
-  margin: 12px 0 4px 7px;
+  font-size: 20px;
+  margin: 12px 0 4px 0px;
 }
 
-input{
+input {
   display: inline-block;
   width: 420px;
-  font-size: 16px;
+  font-size: 20px;
   padding: 6px 6px 6px 8px;
   outline: none;
   background-color: #fafafc;
   border: 1px solid #cccccc;
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#app > div > div > div:nth-child(2) > table > tbody > tr:nth-child(4) > div > span > input {
+  height: 30px;
+  width: 105px;
+  font-size: 20px;
+  padding: 6px 6px 6px 8px;
+}
+
+/* time selector */
+.rc-time-picker-panel-select li {
+  font-size: 20px;
 }
 
 /*#search > input {*/

@@ -10,7 +10,7 @@ import sampleData from './sampleData.js';
 import LogoutButton from './components/LogoutButton.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
-const io = require('socket.io-client');
+import io from 'socket.io-client';
 const socket = io();
 
 class App extends React.Component {

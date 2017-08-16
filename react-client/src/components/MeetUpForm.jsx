@@ -2,7 +2,9 @@ import React from 'react';
 import axios from 'axios';
 import Title from './Title.jsx';
 import Autocomplete from 'react-google-autocomplete';
-
+import moment from 'moment';
+import 'rc-time-picker/assets/index.css';
+import TimePicker from 'rc-time-picker';
 
 class MeetUpForm extends React.Component {
   constructor(props) {
@@ -136,7 +138,15 @@ class MeetUpForm extends React.Component {
           <tr>
             <div className="search">
               <p>Meet up time</p>
-              <input type="text" value={ this.state.meetUpTime } onChange={ this.handleMeetUpTime } />
+                <TimePicker
+                  style={{ width: 70, fontSize: '20' }}
+                  showSecond={false}
+                  defaultValue={moment()}
+                  className="meet-up-time"
+                  onChange={this.handleMeetUpTime}
+                  use12Hours
+                />
+              {/* <input type="text" value={ this.state.meetUpTime } onChange={ this.handleMeetUpTime } /> */}
             </div>
           </tr>
           <tr>
