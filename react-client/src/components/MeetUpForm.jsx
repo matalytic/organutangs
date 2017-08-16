@@ -27,7 +27,7 @@ class MeetUpForm extends React.Component {
 
   componentDidMount() {
     this.props.socket.on('match status', (data) => {
-      this.setState({ status : data });
+      this.setState({ status : data.statusMessage });
     });
   }
 
@@ -52,7 +52,7 @@ class MeetUpForm extends React.Component {
       console.log(1);
       // socket.emit('match status', 'Searching...');
       this.setState({ status : 'Searching...' });
-      this.props.socket.emit('match status', 'Searching...');
+      this.props.socket.emit('match status', { statusMessage: 'Searching...' });
       var userId = this.props.userId;
       var location1 = { "address" : this.state.userLocationAddress, "coordinates": [0,0] };
       var location2 = { "address": this.state.friendId, "coordinates": [0,0] };
