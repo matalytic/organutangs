@@ -73,6 +73,17 @@ var socketInstance = function(io){
                 matchRoom: matchRoom
               });
 
+              // Add loading previous chats for this match
+              Chat.getMostRecent(meeting.friendId, meeting.userId, null, function(err, results) {
+                if (err) { console.log('[sockets] error getting chats from db.', err); }
+                if (results) {
+                  console.log('[sockets] GOT DB saved chats:', results);
+
+                  // emit history (broadcast to all users in room)
+                  io.sockets.in(matchRoom).emit('chat', results.reverse());
+                }                
+              });
+
               // TODO: the Match is found, create instance to save to db
               var newMatch = new Match({
                 userId1: meeting.userId,
@@ -182,7 +193,7 @@ var socketInstance = function(io){
             });
 
             // Broadcast chat to this room only to all users including sender
-            io.sockets.in(matchRoom).emit('chat', chatData);
+            io.sockets.in(matchRoom).emit('chat', newChatMsg);
           });
 
       }); // End socket.join room

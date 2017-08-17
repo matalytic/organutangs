@@ -12,7 +12,6 @@ class ChatContainer extends React.Component {
   }
 
   componentDidMount() {
-    console.log('[ChatContainer] mounted.');
 
     // if there is a match, the socket will let us know the room and the status message
     this.props.socket.on('match status', (data) => {
@@ -25,28 +24,47 @@ class ChatContainer extends React.Component {
 
     // Listen for the room's chat data
     this.props.socket.on('chat', (chatData) => {
-      console.log('[Chat listen on chat]. CLIENT RECEIVE CHAT Broadcast', chatData);
+      console.log('[Chat listen on chat]. Receive chat:', chatData);
+      
+      // if database sends back an array of messages
+      if (Array.isArray(chatData)) {
 
-      let newChatMessage = `${chatData.username}: ${chatData.message}`;
-      let chatsArray = this.state.chatMessagesDisplay;
-      chatsArray.push(newChatMessage);
-      // console.log('[Chat listen on chat]. updateChatsArray:', chatsArray);
-      this.setState({ chatMessagesDisplay: chatsArray });
+        let newChatLoad = [];
+
+        for (let message of chatData) {
+          let formatTime = new Date(message.timestamp).toLocaleTimeString();
+          let newChatMessage = `${message.fromUser} [${formatTime}]: ${message.msg}`;
+          newChatLoad.push(newChatMessage);
+        }
+
+        this.setState({ chatMessagesDisplay: newChatLoad }, function() {
+
+        });
+        
+
+      // if a live message is sent as an object
+      } else {
+        let updatedChats = this.state.chatMessagesDisplay;
+        let formatTime = new Date(chatData.timestamp).toLocaleTimeString();
+        let newChatMessage = `${chatData.fromUser} [${formatTime}]: ${chatData.msg}`;
+        updatedChats.push(newChatMessage);
+
+        this.setState({ chatMessagesDisplay: updatedChats });
+      }
+
     });
   }
 
   componentWillReceiveProps(nextProps) {
     // Clear the chat when Join button is clicked
-    if (nextProps.midpoint === null) {
-      this.setState({chatMessagesDisplay: []});
-    }
+    // if (nextProps.midpoint === null) {
+    //   this.setState({chatMessagesDisplay: []});
+    // }
   }
 
   handleSubmitMessage(e) {
 
     e.preventDefault();
-
-    console.log('click send. should go to room', this.state.matchRoom);
 
     // Send the message data to server via socket
     this.props.socket.emit(this.state.matchRoom, {
