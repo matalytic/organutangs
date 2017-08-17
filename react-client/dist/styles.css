@@ -1,4 +1,4 @@
-* {
+body {
   margin: 0;
   padding: 0;
   /*font-size: 20px;*/
@@ -42,7 +42,9 @@ button {
   background-color: #e0e0e0;
   border: 1px solid rgb(175, 175, 175);
   color: #696969;
+  cursor: pointer;
 }
+
 
 #container {
   /*padding-right: 15px;
@@ -66,26 +68,33 @@ table{
 }
 
 #title{
-  font-size: 26px;
+  font-size: 36px;
   margin-bottom: 15px;
 }
 
 .search > p {
   display: block;
-  font-size: 15px;
-  margin: 12px 0 4px 7px;
+  font-size: 20px;
+  margin: 12px 0 4px 0px;
 }
 
-input{
+input {
   display: inline-block;
   width: 420px;
-  font-size: 16px;
+  font-size: 20px;
   padding: 6px 6px 6px 8px;
   outline: none;
   background-color: #fafafc;
   border: 1px solid #cccccc;
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#app > div > div > div:nth-child(2) > table > tbody > tr:nth-child(4) > div > span > input {
+  height: 30px;
+  width: 105px;
+  font-size: 20px;
+  padding: 6px 6px 6px 8px;
 }
 
 /*#search > input {*/
@@ -239,7 +248,7 @@ div.mapBox > div > div > div > div > div > div > div > div > div > div > div > d
   height: 100%;
 }
 
-input.submit, button.submit {
+input.submit, button.submit, #time-picker-in {
   width: 70px;
   border-radius: 5px;
   display: inline-block;
@@ -277,6 +286,18 @@ input.submit, button.submit {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.6);
+}
+
+button.submit-time {
+  width: 120px;
+  margin: 10px;
+}
+
+#time-picker-in {
+  margin: 10px;
+  font-size: 18px;
+  width: auto;
+  font-style: bold;
 }
 
 /* The switch - the box around the slider */
@@ -352,36 +373,52 @@ input:checked + .slider:before {
 }
 
 #chatContainer {
-    float: right;
-    height: 400px;
-    width: 400px;
-    background: orange;
-    border: 1px solid blue;
+  display: flex;
+  position: absolute;
+  left: 500px;
+  height: 400px;
+  width: 400px;
+  background: orange;
+  /*border: 1px solid blue;*/
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  font-size: 20px;
 }
 
 .chatMessageDisplay {
-    height: 320px;
-    background: gray;
-    width: 100%;
-    overflow: scroll;
+  height: 300px;
+  background: gray;
+  width: 370px;
+  overflow-y: scroll;
+  margin: 7px 0;
+  padding-bottom: 5px;
+  border-radius: 10px;
+}
+
+.chatMessageDisplay::-webkit-scrollbar {
+  display:none;
 }
 
 #chatForm {
-    width: 100%;
-    text-align: center;
-    box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
 
 }
 .chatMessageInput {
-    width: 80%;
-    height: 16px;
-    border: none;
-    box-shadow: 0 0px 0px 0;
-    vertical-align: middle;
+  width: 75%;
+  height: 16px;
+  border: none;
+  box-shadow: 0 0px 0px 0;
+  vertical-align: middle;
 }
 .chatSendButton {
-    width: 12%;
-    vertical-align: middle;
-    font-size: 12px;
-    box-shadow: 0 0px 0px 0;
+  width: 12%;
+  vertical-align: middle;
+  font-size: 12px;
+  box-shadow: 0 0px 0px 0;
+  margin: 5px;
 }

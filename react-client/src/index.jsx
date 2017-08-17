@@ -91,10 +91,10 @@ class App extends React.Component {
             <Title />
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
-          <ChatContainer userId={this.state.userId} 
+          <ChatContainer userId={this.state.userId}
                          socket={ socket } />
           <MeetUpForm userId={this.state.userId}
-                      socket = { socket } 
+                      socket = { socket }
                       handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } />
           <div className="resultsContainer">
             <div className= "mapBox" >
