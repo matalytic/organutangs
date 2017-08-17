@@ -15,9 +15,9 @@ class LogoutButton extends React.Component {
     localStorage.clear();
     axios.get('/users/logout')
       .then((res)=>{
-        console.log(res.data);
+        console.log('logout', res.data, res.data[0]);
         this.props.setAuth(res.data[1]);
-        this.props.setuserId(res.data[0]);
+        this.props.setuserId(null);
       })
       .catch((err)=>{
         console.log(err);
