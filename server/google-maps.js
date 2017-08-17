@@ -13,7 +13,7 @@ module.exports.generateMidpoint = (coord1, coord2, arrivalTime) => {
   const dest = `${coord2[0]},${coord2[1]}`;
   const APIKEY = config.google.APIKEY;
 
-  const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
+  var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
 
   if (arrivalTime) {
     directionsUrl += `&arrival_time=${arrivalTime}`;
@@ -38,7 +38,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
   const dest = `${coord2[0]},${coord2[1]}`;
   const APIKEY = config.google.APIKEY;
 
-  const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
+  var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
 
   if (arrivalTime) {
     directionsUrl += `&arrival_time=${arrivalTime}`;

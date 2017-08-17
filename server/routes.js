@@ -101,7 +101,8 @@ var routerInstance = function(io) {
             gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime)
               .then(({ pointsAlong, midpoint }) => {
                 // Generate midpoint locations with higher search radius
-                yelp.yelpRequest(midpoint, 10, 250)
+                console.log('points along', pointsAlong);
+                yelp.yelpRequest(midpoint, 10, 100)
                   .then((yelpLocations) => {
                     io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
                     io.sockets.emit('mid meeting locations', yelpLocations);

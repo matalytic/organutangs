@@ -12,7 +12,7 @@ class MeetUpForm extends React.Component {
     super(props);
     this.state = {
       friendId: "",
-      userLocationAddress: '',
+      userLocationAddress: 'Locating You...',
       status: '',
       meetUpTime: moment(),
       leaveBy: moment()
@@ -133,6 +133,9 @@ class MeetUpForm extends React.Component {
   }
 
   getCurrentLocation() {
+
+    this.setState( {userLocationAddress: 'Locating You...'} );
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           console.log(position);

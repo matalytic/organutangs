@@ -30,6 +30,8 @@ class App extends React.Component {
 
     this.showSignUp = false;
 
+    this.handleCenterChanged = this.handleCenterChanged.bind(this);
+    this.handleMapMounted = this.handleMapMounted.bind(this);
     this.setAuth = this.setAuth.bind(this);
     this.setuserId = this.setuserId.bind(this);
     // this.handleClick = this.handleClick.bind(this);
@@ -58,6 +60,16 @@ class App extends React.Component {
   handleMarkerClick(item, key) {
     console.log("item:", item, ", key:", key);
     this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
+  }
+
+  handleMapMounted(map) {
+    // Keep a reference to map object for react-google-maps method
+    this._map = map;
+  }
+
+  handleCenterChanged() {
+    console.log('handleCenterChange called');
+    this._map.setCenter({lat: -34, lng: 151});
   }
 
   handleAllLocationsToggle() {
@@ -129,6 +141,7 @@ class App extends React.Component {
                   containerElement={<div style={{height:100+'%'}} />}
                   mapElement={<div style={{height:100+'%'}} />}
                   handleMarkerClick={this.handleMarkerClick.bind(this)}
+                  onCenterChanged={this.handleCenterChanged}
                 />
               </div>
             </div>
