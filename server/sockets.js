@@ -1,6 +1,7 @@
 //Models
 var Meeting = require('../database-mongo/models/meeting.js');
 var Match = require('../database-mongo/models/match.js');
+var Chat = require('../database-mongo/models/chat.js');
 
 //APIs
 const gmaps = require('./google-maps.js');
@@ -8,6 +9,7 @@ const yelp = require('./yelp.js');
 
 //Store active users
 let users = {};
+
 
 const updateUsersToClient = () => {
   // this emits our userlist as an array of usernames
@@ -42,11 +44,10 @@ var socketInstance = function(io){
     socket.on('user looking for friend', function (meeting) {
       // Room set-up (rooms are naively set as sorted and joined names e.g. 'alicebob')
       var sortedPair = [meeting.friendId, meeting.userId].sort();
-      var matchRoom = sortedPair.join('');
+      var matchRoom = sortedPair.join('-');
 
       // set socket's username property
       socket.username = meeting.userId;
-      console.log('socket.suername', socket.username);
 
       socket.join(matchRoom, function() {
         console.log('hit Join, now looking & room joined is ---->', matchRoom);
@@ -60,11 +61,8 @@ var socketInstance = function(io){
           .exec(function (err, doc) {
             if (err) return console.error('Err querying Meeting table for userId and friendId: ', err);
             
-            // think of 'doc' as the FRIENDMeetingDoc
             if (doc) {
-              // Match found! Insert match into the db.
-              // socket.broadcast.emit('match status', 'found');
-              console.log('Found a match--> socket.rooms', socket.rooms[matchRoom]);
+              console.log('Found a match in Meeting DB, matched FriendDoc:', doc);
               
               socket.emit('match status', {
                 statusMessage: 'Your match was found!',
@@ -75,7 +73,18 @@ var socketInstance = function(io){
                 matchRoom: matchRoom
               });
 
-              // the Match db entity is created here but not saved to db
+              // Add loading previous chats for this match
+              Chat.getMostRecent(meeting.friendId, meeting.userId, 5, function(err, results) {
+                if (err) { console.log('[sockets] error getting chats from db.', err); }
+                if (results) {
+                  console.log('[sockets] GOT DB saved chats:', results);
+
+                  // emit history (broadcast to all users in room)
+                  io.sockets.in(matchRoom).emit('chat', results.reverse());
+                }                
+              });
+
+              // TODO: the Match is found, create instance to save to db
               var newMatch = new Match({
                 userId1: meeting.userId,
                 userId2: meeting.friendId,
@@ -161,8 +170,30 @@ var socketInstance = function(io){
           socket.on(matchRoom, function(chatData) {
             console.log('Chat msg gotten on server:', chatData, 'on matchroom', matchRoom);
 
+            // get the toUser and fromUser from the matchRoom name
+            var names = matchRoom.split('-');
+            var fromUserIndex = names.indexOf(chatData.username);
+            var toUserIndex = fromUserIndex === 0 ? 1 : 0;
+            var toUsername = names[toUserIndex];
+
+            var newChatMsg = new Chat({
+              toUser: toUsername,
+              fromUser: chatData.username,
+              msg: chatData.message
+            });
+
+            // Save chat on db
+            Chat.createChatMessage(newChatMsg, (err, savedMsg) => {
+              if (err) { 
+                console.log('ERROR saving chatMsg to DB', err);
+              } else {
+                console.log('Saved chatMsg to db ->', savedMsg);
+              }
+
+            });
+
             // Broadcast chat to this room only to all users including sender
-            io.sockets.in(matchRoom).emit('chat', chatData);
+            io.sockets.in(matchRoom).emit('chat', newChatMsg);
           });
 
       }); // End socket.join room

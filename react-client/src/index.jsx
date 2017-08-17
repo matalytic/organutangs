@@ -38,8 +38,6 @@ class App extends React.Component {
 
   setuserId(input) {
     this.setState({userId: input}, () => {
-      console.log('[index] setUser', this.state.userId);
-
       if (this.state.userId === null) {
         socket.emit('remove user', this.state.userId);
       } else {
@@ -73,7 +71,7 @@ class App extends React.Component {
 
   resetMidpoint() {
     this.setState({ midpoint: null }, function() {
-      console.log('midpot was reset to null');
+      console.log('---midpt was reset---');
     });
   }
 

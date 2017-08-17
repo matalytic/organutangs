@@ -391,8 +391,7 @@ input:checked + .slider:before {
   left: 500px;
   height: 400px;
   width: 400px;
-  background: orange;
-  /*border: 1px solid blue;*/
+  background-color: gray;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
@@ -402,12 +401,14 @@ input:checked + .slider:before {
 }
 
 .chatMessageDisplay {
+  text-align: left;
+  font-size: 0.9em;
   height: 300px;
-  background: gray;
   width: 370px;
+  background-color: rgba(255, 255, 255, 0.5);
   overflow-y: scroll;
   margin: 7px 0;
-  padding-bottom: 5px;
+  padding: 5px 5px;
   border-radius: 10px;
 }
 
@@ -434,10 +435,6 @@ input:checked + .slider:before {
   font-size: 12px;
   box-shadow: 0 0px 0px 0;
   margin: 5px;
-    width: 12%;
-    vertical-align: middle;
-    font-size: 12px;
-    box-shadow: 0 0px 0px 0;
 }
 
 .listing-body > a {
