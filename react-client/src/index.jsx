@@ -10,7 +10,7 @@ import sampleData from './sampleData.js';
 import LogoutButton from './components/LogoutButton.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
-import ChatContainer from './components/ChatContainer.jsx'
+import ChatContainer from './components/ChatContainer.jsx';
 const io = require('socket.io-client');
 const socket = io();
 
@@ -25,7 +25,8 @@ class App extends React.Component {
       allMeetingLocations: sampleData.sampleData,
       displayAllLocations: false,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
-      center: { "lat": 40.751094, "lng": -73.987597 }
+      center: { "lat": 40.751094, "lng": -73.987597 },
+      departure_time: undefined
     };
 
     this.showSignUp = false;
@@ -33,10 +34,19 @@ class App extends React.Component {
     this.setAuth = this.setAuth.bind(this);
     this.setuserId = this.setuserId.bind(this);
     // this.handleClick = this.handleClick.bind(this);
+    this.resetMidpoint = this.resetMidpoint.bind(this);
   }
 
   setuserId(input) {
-    this.setState({userId: input});
+    this.setState({userId: input}, () => {
+      console.log('[index] setUser', this.state.userId);
+
+      if (this.state.userId === null) {
+        socket.emit('remove user', this.state.userId);
+      } else {
+        socket.emit('add user', this.state.userId);
+      }
+    });
   }
 
   setAuth(input) {
@@ -45,21 +55,27 @@ class App extends React.Component {
 
   handleListClick(item, key) {
     console.log("item:", item, ", key:", key);
-    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} })
+    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
   }
 
   handleMarkerClick(item, key) {
     console.log("item:", item, ", key:", key);
-    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} })
-  };
+    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
+  }
 
   handleAllLocationsToggle() {
-    this.setState({displayAllLocations : !this.state.displayAllLocations})
+    this.setState({displayAllLocations : !this.state.displayAllLocations});
     console.log('handleAllLocationsToggle clicked');
   }
 
   toggleLocations() {
-    return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations
+    return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations;
+  }
+
+  resetMidpoint() {
+    this.setState({ midpoint: null }, function() {
+      console.log('midpot was reset to null');
+    });
   }
 
   componentDidMount() {
@@ -79,6 +95,19 @@ class App extends React.Component {
       console.log('midpoint listener data', data);
       this.setState({ midpoint: data, center: data });
     });
+
+    /** update departure_time  */
+    socket.on('departure_time', (data) => {
+      console.log('Got departure_time', data);
+      this.setState( data );
+    });
+
+    if (this.state.userId) {
+      console.log('should be logged in', this.state.userId);
+      socket.emit('add user', this.state.userId);
+    } else {
+      console.log('should be logged out');
+    }
   }
 
 //this render method renders title,meetup,map if you're logged in, else it renders login/register components
@@ -92,10 +121,13 @@ class App extends React.Component {
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
           <ChatContainer userId={this.state.userId}
-                         socket={ socket } />
+                         socket={ socket }
+                         midpoint = {this.state.midpoint} />
           <MeetUpForm userId={this.state.userId}
                       socket = { socket }
-                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } />
+                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) }
+                      resetMidpoint = { this.resetMidpoint }
+                      departure_time = { this.state.departure_time }/>
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">

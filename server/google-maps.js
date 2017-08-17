@@ -38,7 +38,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
   const dest = `${coord2[0]},${coord2[1]}`;
   const APIKEY = config.google.APIKEY;
 
-  const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
+  var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
 
   if (arrivalTime) {
     directionsUrl += `&arrival_time=${arrivalTime}`;
@@ -56,7 +56,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
       var midpoint = coordinates[midIndex];
       var pointsAlong = coordinates.filter((point, idx) => idx % step === 0);
 
-      const departure_time = res.data.routes[0].legs[0].departure_time;
+      const departure_time = res.data.routes[0].legs[0].duration.value;
       return { pointsAlong, midpoint, departure_time };
     })
     .catch((err) => {

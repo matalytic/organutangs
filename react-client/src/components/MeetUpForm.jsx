@@ -6,7 +6,7 @@ import moment from 'moment';
 // import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
 import { LatLngToAddress } from '../../../server/utils';
-
+import $ from 'jquery';
 class MeetUpForm extends React.Component {
   constructor(props) {
     super(props);
@@ -24,13 +24,15 @@ class MeetUpForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitFriendOrAddress = this.handleSubmitFriendOrAddress.bind(this);
 
-    this.handleMeetUpTime = () => {
-      console.log('handleMeetUpTime clicked');
+    this.handleMeetUpTime = (e) => {
+      //console.log('handleMeetUpTime clicked', e);
+      this.setState({ meetUpTime: e });
     };
 
     this.handleSubmitTime = (minutes) => {
       //console.log(this.state.meetUpTime);
       this.setState({ meetUpTime: this.state.meetUpTime.add(minutes, 'minutes') });
+      this.setState({ leaveBy: this.state.leaveBy.add(minutes, 'minutes') });
     };
   }
 
@@ -51,7 +53,15 @@ class MeetUpForm extends React.Component {
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
     });
-    this.setState({ meetUpTime: moment() });
+    // this.setState({ meetUpTime: moment() });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('updated props', nextProps);
+    if (!!nextProps.departure_time) {
+      let minutes = -Math.floor(nextProps.departure_time / 60);
+      this.setState({ leaveBy: this.state.meetUpTime.clone().add(minutes, 'minutes') });
+    }
   }
 
   handleUserChange(event) {
@@ -70,8 +80,6 @@ class MeetUpForm extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    // If Join button is clicked, then the midpoint is reset (chat relies on checking the status of midpoint for displaying)
-    this.props.resetMidpoint();
 
     // If the user entered an address (identified by a space)
     if (this.state.friendId.includes(' ')) {
@@ -82,7 +90,7 @@ class MeetUpForm extends React.Component {
       var userId = this.props.userId;
       var location1 = { "address" : this.state.userLocationAddress, "coordinates": [0,0] };
       var location2 = { "address": this.state.friendId, "coordinates": [0,0] };
-      const arrivalTime = this.state.arrivalTime.utc().valueOf();
+      const arrivalTime = this.state.meetUpTime.utc().valueOf();
       axios.post('/two-locations', {
         userId,
         location1,
@@ -112,6 +120,9 @@ class MeetUpForm extends React.Component {
       "coordinates": [0,0]
     };
     // this.setState({ status: 'Looking for your friend...'});
+
+    // If Join button is clicked, then the midpoint is reset (chat relies on checking the status of midpoint for displaying)
+    this.props.resetMidpoint();
 
     axios.post('/meetings', {
       userId,
@@ -194,11 +205,11 @@ class MeetUpForm extends React.Component {
               <row id="time-picker">
                 <TimePicker
                   showSecond={false}
-                  defaultValue={this.state.meetUpTime}
+                  // defaultValue={this.state.meetUpTime}
                   className="meet-up-time"
                   onChange={this.handleMeetUpTime}
                   use12Hours
-                  value={this.state.meetUpTime}
+                  value={this.state.meetUpTime.local()}
                 />
                 {/* <span id="time-picker-in">add</span> */}
                 <button className="submit submit-time" onClick={() => this.handleSubmitTime(10)}>+10 Minutes</button>
@@ -209,7 +220,7 @@ class MeetUpForm extends React.Component {
 
           <tr>
             <div className="search">
-              <p>Leave by: {this.state.leaveBy.local().format('h:mm A')}</p>
+              <p>Leave by: { this.state.leaveBy.local().format('h:mm A') }</p>
             </div>
           </tr>
 
