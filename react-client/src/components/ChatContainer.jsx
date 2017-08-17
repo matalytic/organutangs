@@ -7,7 +7,9 @@ class ChatContainer extends React.Component {
     this.state = { 
       status : '',
       chatMessagesDisplay: [],
-      matchRoom: ''
+      matchRoom: '',
+      shouldBeHidden: true,
+      matchUser: ''
     };
   }
 
@@ -18,8 +20,17 @@ class ChatContainer extends React.Component {
 
       console.log('[Chat listen on matchstatus]. SOCKET data.', data);
 
-      this.setState({ status : data.statusMessage });
-      this.setState({ matchRoom: data.matchRoom });
+      // get the toUser and fromUser from the matchRoom name
+      var names = data.matchRoom.split('-');
+      var fromUserIndex = names.indexOf(this.props.userId);
+      var toUserIndex = fromUserIndex === 0 ? 1 : 0;
+      var toUsername = names[toUserIndex];
+
+      this.setState({ 
+        status : data.statusMessage,
+        matchRoom: data.matchRoom,
+        matchUser: toUsername
+      });
     });
 
     // Listen for the room's chat data
@@ -37,8 +48,10 @@ class ChatContainer extends React.Component {
           newChatLoad.push(newChatMessage);
         }
 
-        this.setState({ chatMessagesDisplay: newChatLoad }, function() {
-
+        this.setState({ 
+          chatMessagesDisplay: newChatLoad
+        }, function() {
+          this.chatDiv.scrollTop = this.chatDiv.scrollHeight;
         });
         
 
@@ -50,20 +63,23 @@ class ChatContainer extends React.Component {
         updatedChats.push(newChatMessage);
 
         this.setState({ chatMessagesDisplay: updatedChats });
+
+        this.chatDiv.scrollTop = this.chatDiv.scrollHeight;
       }
 
     });
   }
 
   componentWillReceiveProps(nextProps) {
-    // Clear the chat when Join button is clicked
-    // if (nextProps.midpoint === null) {
-    //   this.setState({chatMessagesDisplay: []});
-    // }
+    // When Join button is clicked
+    if (nextProps.midpoint === null) {
+      this.setState({shouldBeHidden: false}, function() {
+        console.log('unhiding chat');
+      });
+    }
   }
 
   handleSubmitMessage(e) {
-
     e.preventDefault();
 
     // Send the message data to server via socket
@@ -74,6 +90,16 @@ class ChatContainer extends React.Component {
 
     // clear chat input
     e.target.reset();
+    this.sendMessageButton.disabled = true;
+  }
+
+  handleTypeMessage(e) {
+    console.log('hadling mssage', e.target.value);
+    if (e.target.value === "") {
+      this.sendMessageButton.disabled = true;
+    } else {
+      this.sendMessageButton.disabled = false;
+    }
   }
 
   render() {
@@ -81,28 +107,44 @@ class ChatContainer extends React.Component {
 
     // when the Join button is clicked, midpoint will be null
     if (this.props.midpoint === null ) {
-      // reset chat
       chatTitle = 'Waiting for friend...';
 
     } else {
-      chatTitle = 'Chat';
+      chatTitle = 'Chat with ' + this.state.matchUser;
     }
 
-    return (
-      <div id="chatContainer">
-        <div>{ chatTitle }</div>
-        <div className="chatMessageDisplay">
-          { (this.state.chatMessagesDisplay).map((item, i) => (
-              <p key={i}>{ item }</p>
-            )
-          )}
+    // Chat view is hidden initially
+    if (this.state.shouldBeHidden) {
+      return (
+        <div></div>
+      )
+
+    // if click Join (with a friend username), chat will be opened
+    } else {
+      return (
+        <div id="chatContainer">
+          <div>{ chatTitle }</div>
+          <div className="chatMessageDisplay" ref={ chatDiv => { this.chatDiv = chatDiv; }}>
+            { (this.state.chatMessagesDisplay).map((item, i) => (
+                <p key={i}>{ item }</p>
+              )
+            )}
+          </div>
+          <form id="chatForm" onSubmit={ (e) => this.handleSubmitMessage(e) }>
+            <input className="chatMessageInput"
+                   type="text"
+                   ref={ (input) => { this.chatMessageInput = input; } }
+                   onChange = { (e) => this.handleTypeMessage(e) } />
+            <input className="chatSendButton"
+                   type="submit"
+                   value="Send"
+                   disabled="true"
+                   ref={ button => this.sendMessageButton = button }/>
+          </form>
         </div>
-        <form id="chatForm" onSubmit={ (e) => this.handleSubmitMessage(e) }>
-          <input className="chatMessageInput" type="text" ref={ (input) => { this.chatMessageInput = input; } }/>
-          <input className="chatSendButton" type="submit" value="Send" />
-        </form>
-      </div>
-    )
+      )
+      
+    }
 
   }
 }

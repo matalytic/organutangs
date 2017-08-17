@@ -41,7 +41,7 @@ module.exports.getMostRecent = function(user1, user2, numberOfRecent = 5, callba
       { $and: [{ toUser: user1}, {fromUser: user2}] },
       { $and: [{ toUser: user2}, {fromUser: user1}] }
     ]
-  }).limit(10).sort({timestamp: -1}).exec(function(err, results){
+  }).limit(numberOfRecent).sort({timestamp: -1}).exec(function(err, results){
     if (err) {
       callback(err, null);
     } else {

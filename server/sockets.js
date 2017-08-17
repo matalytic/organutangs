@@ -74,7 +74,7 @@ var socketInstance = function(io){
               });
 
               // Add loading previous chats for this match
-              Chat.getMostRecent(meeting.friendId, meeting.userId, null, function(err, results) {
+              Chat.getMostRecent(meeting.friendId, meeting.userId, 5, function(err, results) {
                 if (err) { console.log('[sockets] error getting chats from db.', err); }
                 if (results) {
                   console.log('[sockets] GOT DB saved chats:', results);
