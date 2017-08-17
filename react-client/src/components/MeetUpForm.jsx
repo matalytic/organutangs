@@ -47,6 +47,9 @@ class MeetUpForm extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
+    // If Join button is clicked, then the midpoint is reset (chat relies on checking the status of midpoint for displaying)
+    this.props.resetMidpoint();
+
     // If the user entered an address (identified by a space)
     if (this.state.friendId.includes(' ')) {
       console.log(1);
