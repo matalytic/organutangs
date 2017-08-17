@@ -1,7 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 const Title = () => (
   <div id='title'>
-    <h1>MEET UP</h1>
+    Halfwaze
   </div>
 )
+
+export default Title;

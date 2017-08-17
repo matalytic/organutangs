@@ -14,4 +14,4 @@ class Menu extends React.Component {
   }
 }
 
-export default Register;
+export default Menu;
