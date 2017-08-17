@@ -36,7 +36,15 @@ class App extends React.Component {
   }
 
   setuserId(input) {
-    this.setState({userId: input});
+    this.setState({userId: input}, () => {
+      console.log('[index] setUser', this.state.userId);
+
+      if (this.state.userId === null) {
+        socket.emit('remove user', this.state.userId);
+      } else {
+        socket.emit('add user', this.state.userId);
+      }
+    });
   }
 
   setAuth(input) {
@@ -79,6 +87,13 @@ class App extends React.Component {
       console.log('midpoint listener data', data);
       this.setState({ midpoint: data, center: data });
     });
+
+    if (this.state.userId) {
+      console.log('should be logged in', this.state.userId);
+      socket.emit('add user', this.state.userId);
+    } else {
+      console.log('should be logged out');
+    }
   }
 
 //this render method renders title,meetup,map if you're logged in, else it renders login/register components
