@@ -10,7 +10,7 @@ import sampleData from './sampleData.js';
 import LogoutButton from './components/LogoutButton.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
-import ChatContainer from './components/ChatContainer.jsx'
+import ChatContainer from './components/ChatContainer.jsx';
 const io = require('socket.io-client');
 const socket = io();
 
@@ -33,6 +33,7 @@ class App extends React.Component {
     this.setAuth = this.setAuth.bind(this);
     this.setuserId = this.setuserId.bind(this);
     // this.handleClick = this.handleClick.bind(this);
+    this.resetMidpoint = this.resetMidpoint.bind(this);
   }
 
   setuserId(input) {
@@ -53,21 +54,27 @@ class App extends React.Component {
 
   handleListClick(item, key) {
     console.log("item:", item, ", key:", key);
-    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} })
+    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
   }
 
   handleMarkerClick(item, key) {
     console.log("item:", item, ", key:", key);
-    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} })
-  };
+    this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
+  }
 
   handleAllLocationsToggle() {
-    this.setState({displayAllLocations : !this.state.displayAllLocations})
+    this.setState({displayAllLocations : !this.state.displayAllLocations});
     console.log('handleAllLocationsToggle clicked');
   }
 
   toggleLocations() {
-    return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations
+    return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations;
+  }
+
+  resetMidpoint() {
+    this.setState({ midpoint: null }, function() {
+      console.log('midpot was reset to null');
+    });
   }
 
   componentDidMount() {
@@ -107,10 +114,12 @@ class App extends React.Component {
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
           <ChatContainer userId={this.state.userId}
-                         socket={ socket } />
+                         socket={ socket } 
+                         midpoint = {this.state.midpoint} />
           <MeetUpForm userId={this.state.userId}
                       socket = { socket }
-                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } />
+                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } 
+                      resetMidpoint = { this.resetMidpoint } />
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">
