@@ -24,8 +24,9 @@ class MeetUpForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitFriendOrAddress = this.handleSubmitFriendOrAddress.bind(this);
 
-    this.handleMeetUpTime = () => {
-      console.log('handleMeetUpTime clicked');
+    this.handleMeetUpTime = (e) => {
+      //console.log('handleMeetUpTime clicked', e);
+      this.setState({ meetUpTime: e });
     };
 
     this.handleSubmitTime = (minutes) => {
@@ -51,7 +52,7 @@ class MeetUpForm extends React.Component {
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
     });
-    this.setState({ meetUpTime: moment() });
+    // this.setState({ meetUpTime: moment() });
   }
 
   handleUserChange(event) {
@@ -194,11 +195,11 @@ class MeetUpForm extends React.Component {
               <row id="time-picker">
                 <TimePicker
                   showSecond={false}
-                  defaultValue={this.state.meetUpTime}
+                  // defaultValue={this.state.meetUpTime}
                   className="meet-up-time"
                   onChange={this.handleMeetUpTime}
                   use12Hours
-                  value={this.state.meetUpTime}
+                  value={this.state.meetUpTime.local()}
                 />
                 {/* <span id="time-picker-in">add</span> */}
                 <button className="submit submit-time" onClick={() => this.handleSubmitTime(10)}>+10 Minutes</button>
