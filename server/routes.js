@@ -105,8 +105,7 @@ var routerInstance = function(io) {
                 yelp.yelpRequest(midpoint, 10, 100)
                   .then((yelpLocations) => {
                     io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
-                    io.sockets.emit('mid meeting locations', yelpLocations);
-                    io.sockets.emit('routePath', routePath);
+                    io.sockets.emit('mid meeting locations', yelpLocations)
                     // formatted as { location1: [lat,lng], location2: [lat, lng] }
                     io.sockets.emit('user locations', {
                       location1: { lat: coordinates1[0], lng: coordinates1[1] },

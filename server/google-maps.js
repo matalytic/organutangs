@@ -7,30 +7,30 @@ const axios = require('axios');
  * and returns a midpoint in the same format, based on the walking path)
  */
 
-module.exports.generateMidpoint = (coord1, coord2, arrivalTime) => {
-  // Make an API request from Google for directions
-  const origin = `${coord1[0]},${coord1[1]}`;
-  const dest = `${coord2[0]},${coord2[1]}`;
-  const APIKEY = config.google.APIKEY;
+// module.exports.generateMidpoint = (coord1, coord2, arrivalTime) => {
+//   // Make an API request from Google for directions
+//   const origin = `${coord1[0]},${coord1[1]}`;
+//   const dest = `${coord2[0]},${coord2[1]}`;
+//   const APIKEY = config.google.APIKEY;
 
-  var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
+//   var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
 
-  if (arrivalTime) {
-    directionsUrl += `&arrival_time=${arrivalTime}`;
-  }
+//   if (arrivalTime) {
+//     directionsUrl += `&arrival_time=${arrivalTime}`;
+//   }
 
-  return axios.get(directionsUrl)
-    .then((res) => {
-      // Get the line from point A to point B
-      var polyline = res.data.routes[0].overview_polyline.points;
-      var coordinates = decodePolyline(polyline);
-      var mid = Math.floor(coordinates.length/2);
-      return coordinates[mid];
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-};
+//   return axios.get(directionsUrl)
+//     .then((res) => {
+//       // Get the line from point A to point B
+//       var polyline = res.data.routes[0].overview_polyline.points;
+//       var coordinates = decodePolyline(polyline);
+//       var mid = Math.floor(coordinates.length/2);
+//       return coordinates[mid];
+//     })
+//     .catch((err) => {
+//       console.error(err);
+//     });
+// };
 
 module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
   // Make an API request from Google for directions
@@ -57,7 +57,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
       var pointsAlong = coordinates.filter((point, idx) => idx % step === 0);
 
       const departure_time = res.data.routes[0].legs[0].departure_time;
-      return { pointsAlong, midpoint, departure_time, routePath: coordinates };
+      return { pointsAlong, midpoint, departure_time };
     })
     .catch((err) => {
       console.error(err);

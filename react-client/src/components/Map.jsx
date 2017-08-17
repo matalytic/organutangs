@@ -1,11 +1,15 @@
 import React from "react";
-import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import { withGoogleMap, GoogleMap, Marker, Polyline, DirectionsRenderer } from 'react-google-maps';
 
 
 class Map extends React.Component {
   constructor(props){
     super(props);
-    this.state = { location1: [0.0, 0.0], location2: [0.0, 0.0] }
+    this.state = { 
+      location1: [0.0, 0.0], 
+      location2: [0.0, 0.0],
+      directions: null
+    }
   }
 
   componentDidMount() {
@@ -15,6 +19,24 @@ class Map extends React.Component {
         location2: data.location2
       });
     });
+  }
+
+  componentDidUpdate() {
+    console.log('component updated')
+    const DirectionsService = new google.maps.DirectionsService();
+     DirectionsService.route({
+       origin: this.state.location1,
+       destination: this.state.location2,
+       travelMode: google.maps.TravelMode.WALKING,
+     }, (result, status) => {
+       if (status === google.maps.DirectionsStatus.OK) {
+         this.setState({
+           directions: result,
+         });
+       } else {
+         console.error(`error fetching directions ${result}`);
+       }
+     });
   }
 
   render() {
@@ -65,6 +87,9 @@ class Map extends React.Component {
           label="Friend's location"
           icon={{ url: "./images/user2.png" }}
         />
+        {this.state.directions && <DirectionsRenderer 
+                                      directions={this.state.directions}
+                                      options={ { preserveViewport: true, polylineOptions: { strokeColor: '#00BA6A' }} } />}
       </GoogleMap>
     )
   }
