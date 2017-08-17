@@ -261,6 +261,19 @@ input.submit, button.submit, #time-picker-in {
   margin-top: 10px;
 }
 
+button.location {
+  width: 190px;
+  border-radius: 5px;
+  display: inline-block;
+  font-size: 16px;
+  padding: 6px 6px 6px 8px;
+  outline: none;
+  background-color: #fafafc;
+  border: 1px solid #cccccc;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin-top: 10px;
+}
+
 .title {
   font-size: 2em;
   padding: .2em .2em .2em 0;
@@ -421,4 +434,16 @@ input:checked + .slider:before {
   font-size: 12px;
   box-shadow: 0 0px 0px 0;
   margin: 5px;
+    width: 12%;
+    vertical-align: middle;
+    font-size: 12px;
+    box-shadow: 0 0px 0px 0;
+}
+
+.listing-body > a {
+  text-decoration: none;
+}
+
+.listing-body > a {
+  text-decoration: none;
 }
