@@ -6,7 +6,7 @@ import moment from 'moment';
 // import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
 import { LatLngToAddress } from '../../../server/utils';
-
+import $ from 'jquery';
 class MeetUpForm extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +32,7 @@ class MeetUpForm extends React.Component {
     this.handleSubmitTime = (minutes) => {
       //console.log(this.state.meetUpTime);
       this.setState({ meetUpTime: this.state.meetUpTime.add(minutes, 'minutes') });
+      this.setState({ leaveBy: this.state.leaveBy.add(minutes, 'minutes') });
     };
   }
 
@@ -57,6 +58,10 @@ class MeetUpForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     console.log('updated props', nextProps);
+    if (!!nextProps.departure_time) {
+      let minutes = -Math.floor(nextProps.departure_time / 60);
+      this.setState({ leaveBy: this.state.meetUpTime.clone().add(minutes, 'minutes') });
+    }
   }
 
   handleUserChange(event) {
@@ -215,7 +220,7 @@ class MeetUpForm extends React.Component {
 
           <tr>
             <div className="search">
-              <p>Leave by: { this.props.departure_time ? this.props.departure_time.toString() : this.state.leaveBy.local().format('h:mm A') }</p>
+              <p>Leave by: { this.state.leaveBy.local().format('h:mm A') }</p>
             </div>
           </tr>
 

@@ -99,7 +99,7 @@ class App extends React.Component {
     /** update departure_time  */
     socket.on('departure_time', (data) => {
       console.log('Got departure_time', data);
-      this.setState({ data });
+      this.setState( data );
     });
 
     if (this.state.userId) {
