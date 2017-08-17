@@ -55,6 +55,10 @@ class MeetUpForm extends React.Component {
     // this.setState({ meetUpTime: moment() });
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('updated props', nextProps);
+  }
+
   handleUserChange(event) {
     this.setState({ userId: event.target.value });
   }
@@ -211,7 +215,7 @@ class MeetUpForm extends React.Component {
 
           <tr>
             <div className="search">
-              <p>Leave by: {this.state.leaveBy.local().format('h:mm A')}</p>
+              <p>Leave by: { this.props.departure_time ? this.props.departure_time.toString() : this.state.leaveBy.local().format('h:mm A') }</p>
             </div>
           </tr>
 

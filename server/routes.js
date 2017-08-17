@@ -100,6 +100,12 @@ var routerInstance = function(io) {
             // send all points
             gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime)
               .then(({ pointsAlong, midpoint, departure_time }) => {
+
+                /** send out the departure_time */
+                io.sockets.emit('departure_time', {
+                  departure_time: departure_time
+                });
+
                 // Generate midpoint locations with higher search radius
                 yelp.yelpRequest(midpoint, 10, 250)
                   .then((yelpLocations) => {
