@@ -35,8 +35,7 @@ class Map extends React.Component {
         ref={this.props.onMapMounted}
         defaultZoom={16} 
         center={ this.props.center } 
-        defaultCenter={ this.props.center }
-        onCenterChanged={this.props.onCenterChanged} >
+        defaultCenter={ this.props.center } >
         { markers.map((marker, index) => {
             return(
               <Marker
