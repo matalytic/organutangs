@@ -142,6 +142,7 @@ class App extends React.Component {
                   mapElement={<div style={{height:100+'%'}} />}
                   handleMarkerClick={this.handleMarkerClick.bind(this)}
                   onCenterChanged={this.handleCenterChanged}
+                  onMapMounted={this.handleMapMounted}
                 />
               </div>
             </div>
