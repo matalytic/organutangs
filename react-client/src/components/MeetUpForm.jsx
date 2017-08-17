@@ -35,18 +35,7 @@ class MeetUpForm extends React.Component {
   }
 
   componentDidMount() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position);
-          LatLngToAddress(position)
-            .then((location) => {
-              console.log(location.data.results[0].formatted_address);
-              this.setState({ userLocationAddress:location.data.results[0].formatted_address })
-          })
-        });
-    } else {
-        console.log('Could not get geolocation');
-    }
+    this.getCurrentLocation();
 
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
