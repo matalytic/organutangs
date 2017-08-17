@@ -69,6 +69,16 @@ class App extends React.Component {
     this._map = map;
   }
 
+  handleMapMounted(map) {
+    // Keep a reference to map object for react-google-maps method
+    this._map = map;
+  }
+
+  handleCenterChanged() {
+    console.log('handleCenterChange called');
+    this._map.setCenter({lat: -34, lng: 151});
+  }
+
   handleAllLocationsToggle() {
     this.setState({displayAllLocations : !this.state.displayAllLocations}, ()=> {
       var markers = this.toggleLocations().map(function(obj,index){
@@ -160,7 +170,6 @@ class App extends React.Component {
                   containerElement={<div style={{height:100+'%'}} />}
                   mapElement={<div style={{height:100+'%'}} />}
                   handleMarkerClick={this.handleMarkerClick.bind(this)}
-                  onCenterChanged={this.handleCenterChanged}
                   onMapMounted={this.handleMapMounted}
                 />
               </div>
