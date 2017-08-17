@@ -89,7 +89,11 @@ class Map extends React.Component {
         />
         {this.state.directions && <DirectionsRenderer 
                                       directions={this.state.directions}
-                                      options={ { preserveViewport: true, polylineOptions: { strokeColor: '#00BA6A' }} } />}
+                                      options={ { 
+                                        preserveViewport: true, 
+                                        polylineOptions: { strokeColor: '#00BA6A' },
+                                        markerOptions: { visible: false },
+                                      } } />}
       </GoogleMap>
     )
   }

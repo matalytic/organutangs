@@ -32,13 +32,13 @@ const axios = require('axios');
 //     });
 // };
 
-module.exports.generatePointsAlong = (coord1, coord2, arrivalTime) => {
+module.exports.generatePointsAlong = (coord1, coord2, arrivalTime, transportation = walking) => {
   // Make an API request from Google for directions
   const origin = `${coord1[0]},${coord1[1]}`;
   const dest = `${coord2[0]},${coord2[1]}`;
   const APIKEY = config.google.APIKEY;
 
-  var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=walking`;
+  var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=${transportation}`;
 
   if (arrivalTime) {
     directionsUrl += `&arrival_time=${arrivalTime}`;
