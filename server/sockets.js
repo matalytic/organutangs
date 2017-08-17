@@ -6,15 +6,47 @@ var Match = require('../database-mongo/models/match.js');
 const gmaps = require('./google-maps.js');
 const yelp = require('./yelp.js');
 
+//Store active users
+let users = {};
+
+const updateUsersToClient = () => {
+  // this emits our userlist as an array of usernames
+  socket.emit('users', Object.keys(users));
+};
+
 var socketInstance = function(io){
   io.on('connection', function (socket) {
     console.log('a user connected', socket.id);
+
+    socket.on('add user', (username) => {
+      if (username in users) {
+
+      } else {
+        socket.username = username;
+        users[socket.username] = socket;
+        console.log('user online is', socket.username, '/', socket.id);
+      }
+    });
+
+    socket.on('remove user', () => {
+      if (socket.username) {
+        console.log('user logged off:', socket.username, '/', socket.id);
+        delete users[socket.username];
+        socket.username = null;
+        console.log('users is', Object.keys(users));
+      }
+    });
+
 
     // Server is listening to 'user looking' from client. then creates a new room which is joined
     socket.on('user looking for friend', function (meeting) {
       // Room set-up (rooms are naively set as sorted and joined names e.g. 'alicebob')
       var sortedPair = [meeting.friendId, meeting.userId].sort();
       var matchRoom = sortedPair.join('');
+
+      // set socket's username property
+      socket.username = meeting.userId;
+      console.log('socket.suername', socket.username);
 
       socket.join(matchRoom, function() {
         console.log('hit Join, now looking & room joined is ---->', matchRoom);
@@ -138,7 +170,12 @@ var socketInstance = function(io){
 
     socket.on('disconnect', function () {
       // TODO update socket_id db
-      console.log('a user disconnected');
+      console.log('a user disconnected', socket.id);
+      if (socket.username) {
+        console.log('user logged off:', socket.username, '/', socket.id);
+        delete users[socket.username];
+      }
+      // updateUsersToClient();
     });
   });
 };

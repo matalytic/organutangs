@@ -7,9 +7,9 @@ const ListItem = (props) => (
 	          <img className="listing-object" src={props.item.image_url} alt="" />
 	         </div>
 	        <div className="listing-body">
-	          <div className="yelp-list-entry-name" >
+	          <a href={props.item.url} target="blank"><div className="yelp-list-entry-name" >
               {props.listKey+1 + '. ' + props.item.name}
-            </div>
+            </div></a>
 
 	          <div className="yelp-list-entry-rating">{props.item.rating}/5</div>
             <div className="yelp-list-entry-price">{props.item.price}</div>
