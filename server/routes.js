@@ -116,6 +116,15 @@ var routerInstance = function(io) {
                       location1: { lat: coordinates1[0], lng: coordinates1[1] },
                       location2: { lat: coordinates2[0], lng: coordinates2[1] },
                     });
+
+                    res.send({
+                      'midpoint': { lat: midpoint.latitude, lng: midpoint.longitude },
+                      'mid_meeting_locations': yelpLocations,
+                      'user locations': {
+                        location1: { lat: coordinates1[0], lng: coordinates1[1] },
+                        location2: { lat: coordinates2[0], lng: coordinates2[1] },
+                      }
+                    });
                   });
                 const mappedYelp = pointsAlong.map((point) => {
                   // points.forEach(point => {
@@ -135,7 +144,7 @@ var routerInstance = function(io) {
                   .catch(err => console.log("Error with promise all"), err);
               })
               .catch(err => console.log(err));
-            res.send('Results found.');
+            //res.send('Results found.');
           })
           .catch(err => console.log("Err getting geocode from Google API"), err);
       })
