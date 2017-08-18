@@ -63,7 +63,6 @@ class App extends React.Component {
   handleMarkerClick(item, key) {
     console.log("item:", item, ", key:", key);
     this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
-    
   }
 
   handleMapMounted(map) {
@@ -162,7 +161,8 @@ class App extends React.Component {
                       socket = { socket }
                       handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } 
                       resetMidpoint = { this.resetMidpoint } 
-                      handleTransportationChange={this.handleTransportationChange}
+                      handleTransportationChange={ this.handleTransportationChange }
+                      transportation={ this.state.transportation }
 
                       />
           <div className="resultsContainer">
@@ -170,14 +170,14 @@ class App extends React.Component {
               <div className="subMapBox">
                 <Map
                   socket = { socket }
-                  markers={ this.toggleLocations() }
-                  midpoint={ this.state.midpoint }
-                  center={ this.state.center }
+                  markers = { this.toggleLocations() }
+                  midpoint = { this.state.midpoint }
+                  center = { this.state.center }
                   containerElement={<div style={{height:100+'%'}} />}
                   mapElement={<div style={{height:100+'%'}} />}
-                  handleMarkerClick={this.handleMarkerClick.bind(this)}
-                  onMapMounted={this.handleMapMounted}
-                  transportation={this.state.transportation}
+                  handleMarkerClick={ this.handleMarkerClick.bind(this) }
+                  onMapMounted = { this.handleMapMounted }
+                  transportation={  this.state.transportation }
                 />
               </div>
             </div>

@@ -56,6 +56,7 @@ var routerInstance = function(io) {
   router.post('/two-locations', function(req, res) {
     const { userId, location1, location2, arrivalTime, transportation } = req.body;
     var APIKEY = config.google.APIKEY;
+    console.log('in two locations, transportation is', transportation);
 
     var address1 = encodeURIComponent((location1.address).trim()); // Replaces spaces in path with %20
     var geocodeUrl1 = `https://maps.googleapis.com/maps/api/geocode/json?address=${address1}&key=${APIKEY}`;

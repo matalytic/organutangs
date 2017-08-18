@@ -14,7 +14,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime, transportatio
   const APIKEY = config.google.APIKEY;
 
   var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=${transportation}`;
-
+  console.log('gmaps called, with transportation method', transportation);
   if (arrivalTime) {
     directionsUrl += `&arrival_time=${arrivalTime}`;
   }

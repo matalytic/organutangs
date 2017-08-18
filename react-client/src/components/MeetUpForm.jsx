@@ -72,7 +72,7 @@ class MeetUpForm extends React.Component {
       var location1 = { "address" : this.state.userLocationAddress, "coordinates": [0,0] };
       var location2 = { "address": this.state.friendId, "coordinates": [0,0] };
       const arrivalTime = this.state.meetUpTime.utc().valueOf();
-      const { transportation } = this.state;
+      const { transportation } = this.props;
       axios.post('/two-locations', {
         userId,
         location1,
@@ -169,32 +169,31 @@ class MeetUpForm extends React.Component {
                 types={['address']}
                 onChange={ this.handleAddressChange }
               />
-              <button 
-                className="location" 
-                onClick={ this.getCurrentLocation } >Use Current Location
-              </button>
               <img 
                 src="https://image.flaticon.com/icons/svg/130/130066.svg"
+                className={ `transportation ${ this.props.transportation === 'bicycling' ? 'selected' : '' }` }
+                name="bicycling" 
+                onClick={ this.props.handleTransportationChange }
+              />
+              <img 
+                src="https://image.flaticon.com/icons/svg/10/10624.svg"
                 className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
                 name="walking" 
+                onClick={ this.props.handleTransportationChange } 
+              />
+              <img 
+                src="https://image.flaticon.com/icons/svg/310/310733.svg"
+                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` } 
+                name="driving" 
                 onClick={ this.props.handleTransportationChange }
               />
 
-              <button 
-                className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
-                name="walking" 
-                onClick={ this.props.handleTransportationChange } >Walking
-              </button>
-              <button 
-                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` } 
-                name="driving" 
-                onClick={ this.props.handleTransportationChange } >Driving
-              </button>
-              <button 
-                className={ `transportation ${ this.props.transportation === 'biking' ? 'selected' : '' }` } 
-                name="biking" 
-                onClick={ this.props.handleTransportationChange } >
-              </button>
+              <img 
+                src="https://image.flaticon.com/icons/svg/118/118753.svg"
+                className="location" 
+                onClick={ this.getCurrentLocation }
+              />
+
             </div>
           </tr>
 

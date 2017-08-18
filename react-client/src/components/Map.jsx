@@ -25,19 +25,20 @@ class Map extends React.Component {
     const transportation = nextProps.transportation.toUpperCase();
     console.log('component updated')
     const DirectionsService = new google.maps.DirectionsService();
-     DirectionsService.route({
-       origin: this.state.location1,
-       destination: this.state.location2,
-       travelMode: google.maps.TravelMode[transportation],
-     }, (result, status) => {
-       if (status === google.maps.DirectionsStatus.OK) {
-         this.setState({
-           directions: result,
-         });
-       } else {
-         console.error(`error fetching directions ${result}`);
-       }
-     });
+    
+    this.state.location2 && DirectionsService.route({
+      origin: this.state.location1,
+      destination: this.state.location2,
+      travelMode: google.maps.TravelMode[transportation],
+    }, (result, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        this.setState({
+          directions: result,
+        });
+      } else {
+        console.error(`error fetching directions ${result}`);
+      }
+    });
   }
 
   render() {
