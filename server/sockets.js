@@ -10,6 +10,8 @@ const yelp = require('./yelp.js');
 //Store active users
 let users = {};
 
+//Helper functions
+const { getLocationsAndSend } = require('./utils.js');
 
 const updateUsersToClient = () => {
   // this emits our userlist as an array of usernames
@@ -46,6 +48,7 @@ var socketInstance = function(io){
       // Room set-up (rooms are naively set as sorted and joined names e.g. 'alicebob')
       var sortedPair = [meeting.friendId, meeting.userId].sort();
       var matchRoom = sortedPair.join('-');
+      const { arrivalTime, transportation } = meeting;
 
       // set socket's username property
       socket.username = meeting.userId;
@@ -101,37 +104,7 @@ var socketInstance = function(io){
                 .exec(function (err, doc) {
                   var userLocation = doc.userLocation;
 
-                  gmaps.generatePointsAlong(userLocation.coordinates, friendLocation.coordinates)
-                    .then(({ pointsAlong, midpoint }) => {
-                      // Generate midpoint locations with higher search radius
-                      yelp.yelpRequest(midpoint, 10)
-                        .then((yelpLocations) => {
-                          io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
-                          io.sockets.emit('mid meeting locations', yelpLocations);
-                          // formatted as { location1: [lat,lng], location2: [lat, lng] }
-                          io.sockets.emit('user locations', {
-                            location1: { lat: userLocation.coordinates[0], lng: userLocation.coordinates[1] },
-                            location2: { lat: friendLocation.coordinates[0], lng: friendLocation.coordinates[1] },
-                          });
-                        });
-                      const mappedYelp = pointsAlong.map((point) => {
-                        
-                        return yelp.yelpRequest(point, 3)
-                          .then((yelpLocations) => {
-                            // Re-render client
-                            return yelpLocations;
-                          });
-                      });
-                      // Generate all restaurants along the path
-                      Promise.all(mappedYelp)
-                        .then((locationsArr) => {
-                          // MERGE ARRAY OF ARRAYS
-                          const allMeetingLocations = [].concat.apply([], locationsArr);
-                          io.sockets.emit('all meeting locations', allMeetingLocations );
-                        })
-                        .catch(err => console.log("Error with promise all"), err);
-                    })
-                    .catch(err => console.log(err));
+                  getLocationsAndSend(userLocation.coordinates, friendLocation.coordinates, arrivalTime, transportation, io);
 
                   // gmaps.generateMidpoint(userLocation.coordinates, friendLocation.coordinates)
                   //   .then((midpoint) => {
