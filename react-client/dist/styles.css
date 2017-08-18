@@ -287,25 +287,17 @@ img.location:active {
   width: 47px;
 }
 
-button.transportation {
-  width: 100px;
-  border-radius: 5px;
-  display: inline-block;
-  font-size: 16px;
-  padding: 6px 6px 6px 8px;
-  outline: none;
-  background-color: #fafafc;
-  border: 1px solid #cccccc;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  margin-top: 10px;
+img.location {
+  margin-left: 135px;
 }
 
-button.transportation.selected {
+img.transportation.selected {
+  width: 48px;
   border: 3px solid #414141;
 }
 
-img.transportation {
-  width: 100px;
+img.location:active {
+  width: 47px;
 }
 
 .title {
