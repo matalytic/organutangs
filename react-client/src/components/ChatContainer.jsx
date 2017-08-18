@@ -93,8 +93,7 @@ class ChatContainer extends React.Component {
     this.sendMessageButton.disabled = true;
   }
 
-  handleTypeMessage(e) {
-    console.log('hadling mssage', e.target.value);
+  handleTypeMessage(e) {;
     if (e.target.value === "") {
       this.sendMessageButton.disabled = true;
     } else {
@@ -123,24 +122,28 @@ class ChatContainer extends React.Component {
     } else {
       return (
         <div id="chatContainer">
-          <div>{ chatTitle }</div>
-          <div className="chatMessageDisplay" ref={ chatDiv => { this.chatDiv = chatDiv; }}>
-            { (this.state.chatMessagesDisplay).map((item, i) => (
-                <p key={i}>{ item }</p>
-              )
-            )}
+          <input type="checkbox" />
+          <label data-expanded="" data-collapsed=""></label>
+          <div className="chatContainerContent">
+            <div>{ chatTitle }</div>
+            <div className="chatMessageDisplay" ref={ chatDiv => { this.chatDiv = chatDiv; }}>
+              { (this.state.chatMessagesDisplay).map((item, i) => (
+                  <p key={i}>{ item }</p>
+                )
+              )}
+            </div>
+            <form id="chatForm" onSubmit={ (e) => this.handleSubmitMessage(e) }>
+              <input className="chatMessageInput"
+                     type="text"
+                     ref={ (input) => { this.chatMessageInput = input; } }
+                     onChange = { (e) => this.handleTypeMessage(e) } />
+              <input className="chatSendButton"
+                     type="submit"
+                     value="Send"
+                     disabled="true"
+                     ref={ button => this.sendMessageButton = button }/>
+            </form>
           </div>
-          <form id="chatForm" onSubmit={ (e) => this.handleSubmitMessage(e) }>
-            <input className="chatMessageInput"
-                   type="text"
-                   ref={ (input) => { this.chatMessageInput = input; } }
-                   onChange = { (e) => this.handleTypeMessage(e) } />
-            <input className="chatSendButton"
-                   type="submit"
-                   value="Send"
-                   disabled="true"
-                   ref={ button => this.sendMessageButton = button }/>
-          </form>
         </div>
       )
       

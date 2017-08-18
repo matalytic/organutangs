@@ -27,6 +27,7 @@ var socketInstance = function(io){
         socket.username = username;
         users[socket.username] = socket;
         console.log('user online is', socket.username, '/', socket.id);
+        console.log('active users is', Object.keys(users));
       }
     });
 
@@ -35,7 +36,7 @@ var socketInstance = function(io){
         console.log('user logged off:', socket.username, '/', socket.id);
         delete users[socket.username];
         socket.username = null;
-        console.log('users is', Object.keys(users));
+        console.log('active users is', Object.keys(users));
       }
     });
 
@@ -179,9 +180,10 @@ var socketInstance = function(io){
             var newChatMsg = new Chat({
               toUser: toUsername,
               fromUser: chatData.username,
-              msg: chatData.message
+              msg: chatData.message,
+              timestamp: Date.now()
             });
-
+;
             // Save chat on db
             Chat.createChatMessage(newChatMsg, (err, savedMsg) => {
               if (err) { 
@@ -189,7 +191,6 @@ var socketInstance = function(io){
               } else {
                 console.log('Saved chatMsg to db ->', savedMsg);
               }
-
             });
 
             // Broadcast chat to this room only to all users including sender
