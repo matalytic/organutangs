@@ -25,11 +25,14 @@ class App extends React.Component {
       allMeetingLocations: sampleData.sampleData,
       displayAllLocations: false,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
-      center: { "lat": 40.751094, "lng": -73.987597 }
+      center: { "lat": 40.751094, "lng": -73.987597 },
+      routePath: []
     };
 
     this.showSignUp = false;
 
+    this.toggleLocations = this.toggleLocations.bind(this);
+    this.handleMapMounted = this.handleMapMounted.bind(this);
     this.setAuth = this.setAuth.bind(this);
     this.setuserId = this.setuserId.bind(this);
     // this.handleClick = this.handleClick.bind(this);
@@ -58,11 +61,44 @@ class App extends React.Component {
   handleMarkerClick(item, key) {
     console.log("item:", item, ", key:", key);
     this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
+    
+  }
+
+  handleMapMounted(map) {
+    // Keep a reference to map object for react-google-maps method
+    this._map = map;
+  }
+
+  handleMapMounted(map) {
+    // Keep a reference to map object for react-google-maps method
+    this._map = map;
+  }
+
+  handleCenterChanged() {
+    console.log('handleCenterChange called');
+    this._map.setCenter({lat: -34, lng: 151});
   }
 
   handleAllLocationsToggle() {
-    this.setState({displayAllLocations : !this.state.displayAllLocations});
-    console.log('handleAllLocationsToggle clicked');
+    this.setState({displayAllLocations : !this.state.displayAllLocations}, ()=> {
+      var markers = this.toggleLocations().map(function(obj,index){
+        return {
+          lat: obj.coordinates.latitude,
+          lng: obj.coordinates.longitude
+        }
+      });
+
+      console.log('these are the markers', markers);
+      var bounds = new google.maps.LatLngBounds();
+      for (var i = 0; i < markers.length; i++) {
+        bounds.extend(markers[i]);
+      }
+      this._map.fitBounds(bounds);
+      console.log('these are the bounds', bounds);
+
+      console.log('handleAllLocationsToggle clicked');
+    });
+
   }
 
   toggleLocations() {
@@ -82,6 +118,11 @@ class App extends React.Component {
 
     socket.on('all meeting locations', (data) => {
       this.setState({ allMeetingLocations: data });
+    });
+
+    socket.on('routePath', (data) => {
+      this.setState({ routePath: data });
+      console.log('routePath', data);
     });
 
     socket.on('match status', (data) => {
@@ -129,6 +170,7 @@ class App extends React.Component {
                   containerElement={<div style={{height:100+'%'}} />}
                   mapElement={<div style={{height:100+'%'}} />}
                   handleMarkerClick={this.handleMarkerClick.bind(this)}
+                  onMapMounted={this.handleMapMounted}
                 />
               </div>
             </div>

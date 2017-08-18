@@ -12,10 +12,11 @@ class MeetUpForm extends React.Component {
     super(props);
     this.state = {
       friendId: "",
-      userLocationAddress: '',
+      userLocationAddress: 'Locating You...',
       status: '',
       meetUpTime: moment(),
-      leaveBy: moment()
+      leaveBy: moment(),
+      transportation: 'walking'
     };
     this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
@@ -35,18 +36,7 @@ class MeetUpForm extends React.Component {
   }
 
   componentDidMount() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position);
-          LatLngToAddress(position)
-            .then((location) => {
-              console.log(location.data.results[0].formatted_address);
-              this.setState({ userLocationAddress:location.data.results[0].formatted_address })
-          })
-        });
-    } else {
-        console.log('Could not get geolocation');
-    }
+    this.getCurrentLocation();
 
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
@@ -81,11 +71,13 @@ class MeetUpForm extends React.Component {
       var location1 = { "address" : this.state.userLocationAddress, "coordinates": [0,0] };
       var location2 = { "address": this.state.friendId, "coordinates": [0,0] };
       const arrivalTime = this.state.meetUpTime.utc().valueOf();
+      const { transportation } = this.state;
       axios.post('/two-locations', {
         userId,
         location1,
         location2,
-        arrivalTime
+        arrivalTime,
+        transportation,
       }).then((res) => {
         // do something with the res
         this.setState({ status : 'Results found.' });
@@ -133,12 +125,13 @@ class MeetUpForm extends React.Component {
   }
 
   getCurrentLocation() {
+
+    this.setState( {userLocationAddress: 'Locating You...'} );
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position);
           LatLngToAddress(position)
             .then((location) => {
-              console.log(location.data.results[0].formatted_address);
               this.setState({ userLocationAddress:location.data.results[0].formatted_address })
           })
         });
