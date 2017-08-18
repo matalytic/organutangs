@@ -21,6 +21,7 @@ class App extends React.Component {
       auth: !!localStorage.getItem('username') || false,
       userId: localStorage.getItem('username') || '',
       // meetingLocations: [],
+      transportation: 'walking',
       meetingLocations: sampleData.sampleData,
       allMeetingLocations: sampleData.sampleData,
       displayAllLocations: false,
@@ -31,6 +32,7 @@ class App extends React.Component {
 
     this.showSignUp = false;
 
+    this.handleTransportationChange = this.handleTransportationChange.bind(this);
     this.toggleLocations = this.toggleLocations.bind(this);
     this.handleMapMounted = this.handleMapMounted.bind(this);
     this.setAuth = this.setAuth.bind(this);
@@ -88,21 +90,22 @@ class App extends React.Component {
         }
       });
 
-      console.log('these are the markers', markers);
       var bounds = new google.maps.LatLngBounds();
       for (var i = 0; i < markers.length; i++) {
         bounds.extend(markers[i]);
       }
       this._map.fitBounds(bounds);
-      console.log('these are the bounds', bounds);
-
-      console.log('handleAllLocationsToggle clicked');
     });
 
   }
 
   toggleLocations() {
     return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations;
+  }
+
+  handleTransportationChange(event) {
+    console.log('transportation changed', event.target.name);
+    this.setState( {transportation: event.target.name })
   }
 
   resetMidpoint() {
@@ -158,7 +161,10 @@ class App extends React.Component {
           <MeetUpForm userId={this.state.userId}
                       socket = { socket }
                       handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } 
-                      resetMidpoint = { this.resetMidpoint } />
+                      resetMidpoint = { this.resetMidpoint } 
+                      handleTransportationChange={this.handleTransportationChange}
+
+                      />
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">
@@ -171,6 +177,7 @@ class App extends React.Component {
                   mapElement={<div style={{height:100+'%'}} />}
                   handleMarkerClick={this.handleMarkerClick.bind(this)}
                   onMapMounted={this.handleMapMounted}
+                  transportation={this.state.transportation}
                 />
               </div>
             </div>

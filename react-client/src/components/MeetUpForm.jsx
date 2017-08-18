@@ -16,8 +16,9 @@ class MeetUpForm extends React.Component {
       status: '',
       meetUpTime: moment(),
       leaveBy: moment(),
-      transportation: 'walking'
     };
+
+    
     this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleFriendChange = this.handleFriendChange.bind(this);
@@ -95,6 +96,8 @@ class MeetUpForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     e.stopPropagation();
+    const arrivalTime = this.state.meetUpTime.utc().valueOf();
+    const { transportation } = this.state;
     var userId = this.props.userId;
     var friendId = this.state.friendId;
     var userLocation = {
@@ -116,7 +119,9 @@ class MeetUpForm extends React.Component {
           {
             userId,
             friendId,
-            userLocation
+            userLocation,
+            arrivalTime,
+            transportation
           });
       })
       .catch( (error) => {
@@ -164,7 +169,32 @@ class MeetUpForm extends React.Component {
                 types={['address']}
                 onChange={ this.handleAddressChange }
               />
-              <button className="location" onClick={ this.getCurrentLocation } >Use Current Location</button>
+              <button 
+                className="location" 
+                onClick={ this.getCurrentLocation } >Use Current Location
+              </button>
+              <img 
+                src="https://image.flaticon.com/icons/svg/130/130066.svg"
+                className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
+                name="walking" 
+                onClick={ this.props.handleTransportationChange }
+              />
+
+              <button 
+                className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
+                name="walking" 
+                onClick={ this.props.handleTransportationChange } >Walking
+              </button>
+              <button 
+                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` } 
+                name="driving" 
+                onClick={ this.props.handleTransportationChange } >Driving
+              </button>
+              <button 
+                className={ `transportation ${ this.props.transportation === 'biking' ? 'selected' : '' }` } 
+                name="biking" 
+                onClick={ this.props.handleTransportationChange } >
+              </button>
             </div>
           </tr>
 

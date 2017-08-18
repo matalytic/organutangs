@@ -262,7 +262,7 @@ input.submit, button.submit, #time-picker-in {
 }
 
 button.location {
-  width: 190px;
+  width: 180px;
   border-radius: 5px;
   display: inline-block;
   font-size: 16px;
@@ -272,6 +272,27 @@ button.location {
   border: 1px solid #cccccc;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   margin-top: 10px;
+}
+
+button.transportation {
+  width: 100px;
+  border-radius: 5px;
+  display: inline-block;
+  font-size: 16px;
+  padding: 6px 6px 6px 8px;
+  outline: none;
+  background-color: #fafafc;
+  border: 1px solid #cccccc;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin-top: 10px;
+}
+
+button.transportation.selected {
+  border: 3px solid #414141;
+}
+
+img.transportation {
+  width: 100px;
 }
 
 .title {

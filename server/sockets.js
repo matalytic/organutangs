@@ -46,6 +46,7 @@ var socketInstance = function(io){
       // Room set-up (rooms are naively set as sorted and joined names e.g. 'alicebob')
       var sortedPair = [meeting.friendId, meeting.userId].sort();
       var matchRoom = sortedPair.join('-');
+      const { arrivalTime, transportation } = meeting;
 
       // set socket's username property
       socket.username = meeting.userId;
@@ -101,7 +102,7 @@ var socketInstance = function(io){
                 .exec(function (err, doc) {
                   var userLocation = doc.userLocation;
 
-                  gmaps.generatePointsAlong(userLocation.coordinates, friendLocation.coordinates)
+                  gmaps.generatePointsAlong(userLocation.coordinates, friendLocation.coordinates, arrivalTime, transportation)
                     .then(({ pointsAlong, midpoint }) => {
                       // Generate midpoint locations with higher search radius
                       yelp.yelpRequest(midpoint, 10)
