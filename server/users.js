@@ -55,7 +55,18 @@ router.post('/register', function(req, res) {
           if (err) {
             throw err;
           } else {
-            res.status(201).send();
+            // res.status(201).send();
+            let token = jwt.sign({
+              id: user._id,
+              username: user.username
+            }, secret, { expiresIn: '1h' });
+            res.json({
+              success: true,
+              username: user.username,
+              user_id: user._id,
+              token: token,
+              auth: true
+            });
           }
         });
       } else { /** errors */
