@@ -54,7 +54,7 @@ var routerInstance = function(io) {
   });
 
   router.post('/two-locations', function(req, res) {
-    const { userId, location1, location2, arrivalTime } = req.body;
+    var { userId, location1, location2, arrivalTime } = req.body;
     var APIKEY = config.google.APIKEY;
 
     var address1 = encodeURIComponent((location1.address).trim()); // Replaces spaces in path with %20
@@ -67,9 +67,13 @@ var routerInstance = function(io) {
         var coordinates1 = [ lat1, lng1 ];
 
         // find friend's location in DB
-        if (!location2.includes(' ')) {
-          Meeting.findOne({userId: location2}, (err, meeting) => {
-            if (err) console.log('err at finding one meeting');
+        if (!location2.address.includes(' ')) {
+          console.log('USING FRIEND NAME');
+          Meeting.findOne({userId: location2.address}, (err, meeting) => {
+            if (err) {
+              console.log('err at finding one meeting')
+              res.send('err at finding one meeting');
+            };
             if (meeting) {
               location2 = meeting.userLocation;
               // meeting.userLocation = userLocation;
@@ -158,6 +162,85 @@ var routerInstance = function(io) {
 
             }
           });
+        } else {
+          axios.get(geocodeUrl2)
+            .then((geocode2) => {
+              var lat2 = geocode2.data.results[0].geometry.location.lat;
+              var lng2 = geocode2.data.results[0].geometry.location.lng;
+              var coordinates2 = [ lat2, lng2 ];
+
+              console.log('coordinates1', coordinates1);
+              console.log('coordinates2', coordinates2);
+
+              // get midpoint
+              // gmaps.generateMidpoint(coordinates1, coordinates2)
+              //   .then((midpoint) => {
+              //     console.log('Midpoint generated:', midpoint);
+              //     // Put midpoint in Yelp API
+              //     yelp.yelpRequest(midpoint)
+              //       .then((yelpLocations) => {
+              //         // Re-render client
+              //         io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
+              //         io.sockets.emit('meeting locations', yelpLocations);
+
+              //         // formatted as { location1: [lat,lng], location2: [lat, lng] }
+              //         io.sockets.emit('user locations', {
+              //           location1: { lat: coordinates1[0], lng: coordinates1[1] },
+              //           location2: { lat: coordinates2[0], lng: coordinates2[1] }
+              //         })
+              //       });
+              //   });
+
+              // send all points
+              gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime)
+                .then(({ pointsAlong, midpoint, departure_time }) => {
+
+                  /** send out the departure_time */
+                  io.sockets.emit('departure_time', {
+                    departure_time: departure_time
+                  });
+
+                  // Generate midpoint locations with higher search radius
+                  yelp.yelpRequest(midpoint, 10, 250)
+                    .then((yelpLocations) => {
+                      io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
+                      io.sockets.emit('mid meeting locations', yelpLocations);
+                      // formatted as { location1: [lat,lng], location2: [lat, lng] }
+                      io.sockets.emit('user locations', {
+                        location1: { lat: coordinates1[0], lng: coordinates1[1] },
+                        location2: { lat: coordinates2[0], lng: coordinates2[1] },
+                      });
+
+                      res.send({
+                        'midpoint': { lat: midpoint.latitude, lng: midpoint.longitude },
+                        'mid_meeting_locations': yelpLocations,
+                        'user locations': {
+                          location1: { lat: coordinates1[0], lng: coordinates1[1] },
+                          location2: { lat: coordinates2[0], lng: coordinates2[1] },
+                        }
+                      });
+                    });
+                  const mappedYelp = pointsAlong.map((point) => {
+                    // points.forEach(point => {
+                    return yelp.yelpRequest(point, 3)
+                      .then((yelpLocations) => {
+                        // Re-render client
+                        return yelpLocations;
+                      });
+                  });
+                  // Generate all restaurants along the path
+                  Promise.all(mappedYelp)
+                    .then((locationsArr) => {
+                      // MERGE ARRAY OF ARRAYS
+                      const allMeetingLocations = [].concat.apply([], locationsArr);
+                      io.sockets.emit('all meeting locations', allMeetingLocations );
+                    })
+                    .catch(err => console.log("Error with promise all"), err);
+                })
+                .catch(err => console.log(err));
+              //res.send('Results found.');
+            })
+            .catch(err => console.log("Err getting geocode from Google API"), err);
         }
       })
       .catch(err => console.log("Err getting geocode from Google API", err));
