@@ -10,7 +10,10 @@ var UserSchema = mongoose.Schema({
   },
   password: {
     type: String
-  }
+  },
+  savedLocations: {
+    type: Array
+  },
 });
 
 var User = module.exports = mongoose.model('User', UserSchema);
@@ -41,3 +44,13 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
       callback(null, isMatch);
   });
 };
+
+module.exports.getSavedLocations = function(username){
+  var query = { username: username }
+  User.bindone()
+}
+
+module.exports.saveLocation = function(username, locationObj){
+  var query = { username: username }
+  User.bindone()
+}

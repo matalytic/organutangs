@@ -18,7 +18,6 @@ class MeetUpForm extends React.Component {
       leaveBy: moment(),
     };
 
-    
     this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleFriendChange = this.handleFriendChange.bind(this);
@@ -38,7 +37,6 @@ class MeetUpForm extends React.Component {
 
   componentDidMount() {
     this.getCurrentLocation();
-
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
     });
@@ -130,9 +128,7 @@ class MeetUpForm extends React.Component {
   }
 
   getCurrentLocation() {
-
     this.setState( {userLocationAddress: 'Locating You...'} );
-
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           LatLngToAddress(position)
