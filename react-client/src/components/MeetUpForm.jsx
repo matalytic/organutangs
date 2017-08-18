@@ -165,6 +165,7 @@ class MeetUpForm extends React.Component {
                 types={['address']}
                 onChange={ this.handleAddressChange }
               />
+<<<<<<< HEAD
               <img 
                 src="https://image.flaticon.com/icons/svg/130/130066.svg"
                 className={ `transportation ${ this.props.transportation === 'bicycling' ? 'selected' : '' }` }
@@ -190,6 +191,34 @@ class MeetUpForm extends React.Component {
                 onClick={ this.getCurrentLocation }
               />
 
+=======
+              <button 
+                className="location" 
+                onClick={ this.getCurrentLocation } >Use Current Location
+              </button>
+              <img 
+                src="https://image.flaticon.com/icons/svg/130/130066.svg"
+                className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
+                name="walking" 
+                onClick={ this.props.handleTransportationChange }
+              />
+
+              <button 
+                className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
+                name="walking" 
+                onClick={ this.props.handleTransportationChange } >Walking
+              </button>
+              <button 
+                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` } 
+                name="driving" 
+                onClick={ this.props.handleTransportationChange } >Driving
+              </button>
+              <button 
+                className={ `transportation ${ this.props.transportation === 'biking' ? 'selected' : '' }` } 
+                name="biking" 
+                onClick={ this.props.handleTransportationChange } >
+              </button>
+>>>>>>> transportation methods
             </div>
           </tr>
 

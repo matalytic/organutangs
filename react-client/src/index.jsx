@@ -163,7 +163,6 @@ class App extends React.Component {
                       resetMidpoint = { this.resetMidpoint } 
                       handleTransportationChange={ this.handleTransportationChange }
                       transportation={ this.state.transportation }
-
                       />
           <div className="resultsContainer">
             <div className= "mapBox" >
