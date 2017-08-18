@@ -80,7 +80,6 @@ var routerInstance = function(io) {
 
             console.log('coordinates1', coordinates1);
             console.log('coordinates2', coordinates2);
-
             // Deprecated
             // get midpoint
             // gmaps.generateMidpoint(coordinates1, coordinates2)
