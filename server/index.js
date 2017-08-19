@@ -8,6 +8,7 @@ var morgan = require('morgan');
 var expressValidator = require('express-validator');
 var session = require('express-session');
 var app = express();
+const cors = require('cors');
 
 // Socket
 var http = require('http').Server(app);
@@ -21,7 +22,7 @@ var routes = require('./routes.js')(io);
 //Middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(cors());
 /** using jwt instead of session */
 // app.use(session({
 //   secret: 'secret',

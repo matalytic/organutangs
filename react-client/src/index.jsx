@@ -27,6 +27,7 @@ class App extends React.Component {
       displayAllLocations: false,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
       center: { "lat": 40.751094, "lng": -73.987597 },
+      departure_time: undefined,
       routePath: []
     };
 
@@ -136,6 +137,12 @@ class App extends React.Component {
       this.setState({ midpoint: data, center: data });
     });
 
+    /** update departure_time  */
+    socket.on('departure_time', (data) => {
+      console.log('Got departure_time', data);
+      this.setState( data );
+    });
+
     if (this.state.userId) {
       console.log('should be logged in', this.state.userId);
       socket.emit('add user', this.state.userId);
@@ -155,15 +162,15 @@ class App extends React.Component {
             <LogoutButton setuserId={this.setuserId} setAuth={this.setAuth}/>
           </div>
           <ChatContainer userId={this.state.userId}
-                         socket={ socket } 
+                         socket={ socket }
                          midpoint = {this.state.midpoint} />
           <MeetUpForm userId={this.state.userId}
                       socket = { socket }
-                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) } 
-                      resetMidpoint = { this.resetMidpoint } 
+                      handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) }
+                      resetMidpoint = { this.resetMidpoint }
                       handleTransportationChange={ this.handleTransportationChange }
-                      transportation={ this.state.transportation }
-                      />
+                      transportation={ this.state.transportation }/>
+
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">

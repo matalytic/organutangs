@@ -6,7 +6,7 @@ import moment from 'moment';
 // import 'rc-time-picker/assets/index.css';
 import TimePicker from 'rc-time-picker';
 import { LatLngToAddress } from '../../../server/utils';
-
+import $ from 'jquery';
 class MeetUpForm extends React.Component {
   constructor(props) {
     super(props);
@@ -25,13 +25,15 @@ class MeetUpForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmitFriendOrAddress = this.handleSubmitFriendOrAddress.bind(this);
 
-    this.handleMeetUpTime = () => {
-      console.log('handleMeetUpTime clicked');
+    this.handleMeetUpTime = (e) => {
+      //console.log('handleMeetUpTime clicked', e);
+      this.setState({ meetUpTime: e });
     };
 
     this.handleSubmitTime = (minutes) => {
       //console.log(this.state.meetUpTime);
       this.setState({ meetUpTime: this.state.meetUpTime.add(minutes, 'minutes') });
+      this.setState({ leaveBy: this.state.leaveBy.add(minutes, 'minutes') });
     };
   }
 
@@ -40,7 +42,15 @@ class MeetUpForm extends React.Component {
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
     });
-    this.setState({ meetUpTime: moment() });
+    // this.setState({ meetUpTime: moment() });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('updated props', nextProps);
+    if (!!nextProps.departure_time) {
+      let minutes = -Math.floor(nextProps.departure_time / 60);
+      this.setState({ leaveBy: this.state.meetUpTime.clone().add(minutes, 'minutes') });
+    }
   }
 
   handleUserChange(event) {
@@ -165,28 +175,28 @@ class MeetUpForm extends React.Component {
                 types={['address']}
                 onChange={ this.handleAddressChange }
               />
-              <img 
+              <img
                 src="https://image.flaticon.com/icons/svg/130/130066.svg"
                 className={ `transportation ${ this.props.transportation === 'bicycling' ? 'selected' : '' }` }
-                name="bicycling" 
+                name="bicycling"
                 onClick={ this.props.handleTransportationChange }
               />
-              <img 
+              <img
                 src="https://image.flaticon.com/icons/svg/10/10624.svg"
                 className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
-                name="walking" 
-                onClick={ this.props.handleTransportationChange } 
+                name="walking"
+                onClick={ this.props.handleTransportationChange }
               />
-              <img 
+              <img
                 src="https://image.flaticon.com/icons/svg/310/310733.svg"
-                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` } 
-                name="driving" 
+                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` }
+                name="driving"
                 onClick={ this.props.handleTransportationChange }
               />
 
-              <img 
+              <img
                 src="https://image.flaticon.com/icons/svg/118/118753.svg"
-                className="location" 
+                className="location"
                 onClick={ this.getCurrentLocation }
               />
             </div>
@@ -212,11 +222,11 @@ class MeetUpForm extends React.Component {
               <row id="time-picker">
                 <TimePicker
                   showSecond={false}
-                  defaultValue={this.state.meetUpTime}
+                  // defaultValue={this.state.meetUpTime}
                   className="meet-up-time"
                   onChange={this.handleMeetUpTime}
                   use12Hours
-                  value={this.state.meetUpTime}
+                  value={this.state.meetUpTime.local()}
                 />
                 {/* <span id="time-picker-in">add</span> */}
                 <button className="submit submit-time" onClick={() => this.handleSubmitTime(10)}>+10 Minutes</button>
@@ -227,7 +237,7 @@ class MeetUpForm extends React.Component {
 
           <tr>
             <div className="search">
-              <p>Leave by: {this.state.leaveBy.local().format('h:mm A')}</p>
+              <p>Leave by: { this.state.leaveBy.local().format('h:mm A') }</p>
             </div>
           </tr>
 

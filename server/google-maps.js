@@ -15,6 +15,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime, transportatio
 
   var directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${dest}&key=${APIKEY}&mode=${transportation}`;
   console.log('gmaps called, with transportation method', transportation);
+
   if (arrivalTime) {
     directionsUrl += `&arrival_time=${arrivalTime}`;
   }
@@ -31,7 +32,7 @@ module.exports.generatePointsAlong = (coord1, coord2, arrivalTime, transportatio
       var midpoint = coordinates[midIndex];
       var pointsAlong = coordinates.filter((point, idx) => idx % step === 0);
 
-      const departure_time = res.data.routes[0].legs[0].departure_time;
+      const departure_time = res.data.routes[0].legs[0].duration.value;
       return { pointsAlong, midpoint, departure_time };
     })
     .catch((err) => {
