@@ -116,7 +116,7 @@ var routerInstance = function(io) {
                           res.send({
                             'midpoint': { lat: midpoint.latitude, lng: midpoint.longitude },
                             'mid_meeting_locations': yelpLocations,
-                            'userlocations': {
+                            'user_locations': {
                               location1: { lat: coordinates1[0], lng: coordinates1[1] },
                               location2: { lat: coordinates2[0], lng: coordinates2[1] },
                             }
@@ -160,7 +160,7 @@ var routerInstance = function(io) {
               getLocationsAndSend(coordinates1, coordinates2, arrivalTime, transportation, io);
               //res.send('Results found.');
             })
-            .catch(err => console.log("Err getting geocode from Google API"), err);
+            .catch(err => { console.log("Err getting geocode from Google API", err) });
         }
       })
       .catch(err => console.log("Err getting geocode from Google API", err));
