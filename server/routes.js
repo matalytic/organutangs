@@ -143,7 +143,6 @@ var routerInstance = function(io) {
                   //res.send('Results found.');
                 })
                 .catch(err => console.log("Err getting geocode from Google API"), err);
-
             }
           });
         } else {
