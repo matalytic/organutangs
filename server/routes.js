@@ -115,7 +115,7 @@ var routerInstance = function(io) {
                           res.send({
                             'midpoint': { lat: midpoint.latitude, lng: midpoint.longitude },
                             'mid_meeting_locations': yelpLocations,
-                            'user_locations': {
+                            'userlocations': {
                               location1: { lat: coordinates1[0], lng: coordinates1[1] },
                               location2: { lat: coordinates2[0], lng: coordinates2[1] },
                             }
@@ -146,6 +146,8 @@ var routerInstance = function(io) {
             }
           });
         } else {
+          var address2 = encodeURIComponent((location2.address).trim()); // Replaces spaces in path with %20
+          var geocodeUrl2 = `https://maps.googleapis.com/maps/api/geocode/json?address=${address2}&key=${APIKEY}`;
           axios.get(geocodeUrl2)
             .then((geocode2) => {
               var lat2 = geocode2.data.results[0].geometry.location.lat;
