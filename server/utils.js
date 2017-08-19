@@ -21,6 +21,9 @@ module.exports.getLocationsAndSend = (coordinates1, coordinates2, arrivalTime, t
       console.log('points along', pointsAlong);
       yelp.yelpRequest(midpoint, 10, 100)
         .then((yelpLocations) => {
+          io.sockets.emit('match status', {
+            statusMessage: 'Location Found',
+          });
           io.sockets.emit('midpoint', { lat: midpoint.latitude, lng: midpoint.longitude });
           io.sockets.emit('mid meeting locations', yelpLocations)
           // formatted as { location1: [lat,lng], location2: [lat, lng] }

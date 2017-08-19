@@ -94,7 +94,7 @@ var routerInstance = function(io) {
                   console.log('coordinates2', coordinates2);
 
                   // send all points
-                  gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime)
+                  gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime, transportation)
                     .then(({ pointsAlong, midpoint, departure_time }) => {
 
                       /** send out the departure_time */
