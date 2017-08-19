@@ -545,3 +545,16 @@ input:checked + .slider:before {
 .listing-body > a {
   text-decoration: none;
 }
+
+svg.favorite-icon {
+  display: block;
+  fill: #000000;
+  height: 32px; 
+  width: 32px;
+}
+
+svg.favorite-icon.favorite-active {
+  fill: #ff5e5e;
+}
+
+
