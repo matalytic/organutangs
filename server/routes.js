@@ -4,6 +4,8 @@ const router = express.Router();
 const config = require('./config.js');
 var axios = require('axios');
 
+const { getLocationsAndSend } = require('./utils.js');
+
 // APIs
 const gmaps = require('./google-maps.js');
 const yelp = require('./yelp.js');
