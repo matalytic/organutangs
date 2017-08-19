@@ -1,11 +1,15 @@
 import React from "react";
-import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import { withGoogleMap, GoogleMap, Marker, Polyline, DirectionsRenderer } from 'react-google-maps';
 
 
 class Map extends React.Component {
   constructor(props){
     super(props);
-    this.state = { location1: [0.0, 0.0], location2: [0.0, 0.0] }
+    this.state = { 
+      location1: null,
+      location2: null,
+      directions: null
+    }
   }
 
   componentDidMount() {
@@ -14,6 +18,26 @@ class Map extends React.Component {
         location1: data.location1,
         location2: data.location2
       });
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const transportation = nextProps.transportation.toUpperCase();
+    console.log('component updated')
+    const DirectionsService = new google.maps.DirectionsService();
+    
+    this.state.location2 && DirectionsService.route({
+      origin: this.state.location1,
+      destination: this.state.location2,
+      travelMode: google.maps.TravelMode[transportation],
+    }, (result, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        this.setState({
+          directions: result,
+        });
+      } else {
+        console.error(`error fetching directions ${result}`);
+      }
     });
   }
 
@@ -31,7 +55,11 @@ class Map extends React.Component {
     });
 
     return(
-      <GoogleMap defaultZoom={16} center={ this.props.center } defaultCenter={ this.props.center }>
+      <GoogleMap 
+        ref={this.props.onMapMounted}
+        defaultZoom={16} 
+        center={ this.props.center } 
+        defaultCenter={ this.props.center } >
         { markers.map((marker, index) => {
             return(
               <Marker
@@ -49,18 +77,25 @@ class Map extends React.Component {
           label="Midpoint"
           icon={{ url: "./images/midPointIcon.png" }}
           />
-        <Marker
+        { this.state.location1 && <Marker
           key="User 1"
           position={ this.state.location1 }
           label="Your location"
           icon={{ url: "./images/user1.png" }}
-        />
-        <Marker
+        /> }
+        { this.state.location2 && <Marker
           key="Friend"
           position={ this.state.location2 }
           label="Friend's location"
           icon={{ url: "./images/user2.png" }}
-        />
+        /> }
+        {this.state.directions && <DirectionsRenderer 
+                                      directions={this.state.directions}
+                                      options={ { 
+                                        preserveViewport: true, 
+                                        polylineOptions: { strokeColor: '#00BA6A' },
+                                        markerOptions: { visible: false },
+                                      } } />}
       </GoogleMap>
     )
   }

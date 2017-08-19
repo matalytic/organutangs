@@ -12,11 +12,12 @@ class MeetUpForm extends React.Component {
     super(props);
     this.state = {
       friendId: "",
-      userLocationAddress: '',
+      userLocationAddress: 'Locating You...',
       status: '',
       meetUpTime: moment(),
-      leaveBy: moment()
+      leaveBy: moment(),
     };
+
     this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handleFriendChange = this.handleFriendChange.bind(this);
@@ -37,19 +38,7 @@ class MeetUpForm extends React.Component {
   }
 
   componentDidMount() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position);
-          LatLngToAddress(position)
-            .then((location) => {
-              console.log(location.data.results[0].formatted_address);
-              this.setState({ userLocationAddress:location.data.results[0].formatted_address })
-          })
-        });
-    } else {
-        console.log('Could not get geolocation');
-    }
-
+    this.getCurrentLocation();
     this.props.socket.on('match status', (data) => {
       this.setState({ status : data.statusMessage });
     });
@@ -91,11 +80,13 @@ class MeetUpForm extends React.Component {
       var location1 = { "address" : this.state.userLocationAddress, "coordinates": [0,0] };
       var location2 = { "address": this.state.friendId, "coordinates": [0,0] };
       const arrivalTime = this.state.meetUpTime.utc().valueOf();
+      const { transportation } = this.props;
       axios.post('/two-locations', {
         userId,
         location1,
         location2,
-        arrivalTime
+        arrivalTime,
+        transportation,
       }).then((res) => {
         // do something with the res
         this.setState({ status : 'Results found.' });
@@ -113,6 +104,8 @@ class MeetUpForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     e.stopPropagation();
+    const arrivalTime = this.state.meetUpTime.utc().valueOf();
+    const { transportation } = this.state;
     var userId = this.props.userId;
     var friendId = this.state.friendId;
     var userLocation = {
@@ -134,7 +127,9 @@ class MeetUpForm extends React.Component {
           {
             userId,
             friendId,
-            userLocation
+            userLocation,
+            arrivalTime,
+            transportation
           });
       })
       .catch( (error) => {
@@ -143,12 +138,11 @@ class MeetUpForm extends React.Component {
   }
 
   getCurrentLocation() {
+    this.setState( {userLocationAddress: 'Locating You...'} );
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position);
           LatLngToAddress(position)
             .then((location) => {
-              console.log(location.data.results[0].formatted_address);
               this.setState({ userLocationAddress:location.data.results[0].formatted_address })
           })
         });
@@ -181,7 +175,30 @@ class MeetUpForm extends React.Component {
                 types={['address']}
                 onChange={ this.handleAddressChange }
               />
-              <button className="location" onClick={ this.getCurrentLocation } >Use Current Location</button>
+              <img
+                src="https://image.flaticon.com/icons/svg/130/130066.svg"
+                className={ `transportation ${ this.props.transportation === 'bicycling' ? 'selected' : '' }` }
+                name="bicycling"
+                onClick={ this.props.handleTransportationChange }
+              />
+              <img
+                src="https://image.flaticon.com/icons/svg/10/10624.svg"
+                className={ `transportation ${ this.props.transportation === 'walking' ? 'selected' : '' }` }
+                name="walking"
+                onClick={ this.props.handleTransportationChange }
+              />
+              <img
+                src="https://image.flaticon.com/icons/svg/310/310733.svg"
+                className={ `transportation ${ this.props.transportation === 'driving' ? 'selected' : '' }` }
+                name="driving"
+                onClick={ this.props.handleTransportationChange }
+              />
+
+              <img
+                src="https://image.flaticon.com/icons/svg/118/118753.svg"
+                className="location"
+                onClick={ this.getCurrentLocation }
+              />
             </div>
           </tr>
 

@@ -21,16 +21,21 @@ class App extends React.Component {
       auth: !!localStorage.getItem('username') || false,
       userId: localStorage.getItem('username') || '',
       // meetingLocations: [],
+      transportation: 'walking',
       meetingLocations: sampleData.sampleData,
       allMeetingLocations: sampleData.sampleData,
       displayAllLocations: false,
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
       center: { "lat": 40.751094, "lng": -73.987597 },
-      departure_time: undefined
+      departure_time: undefined,
+      routePath: []
     };
 
     this.showSignUp = false;
 
+    this.handleTransportationChange = this.handleTransportationChange.bind(this);
+    this.toggleLocations = this.toggleLocations.bind(this);
+    this.handleMapMounted = this.handleMapMounted.bind(this);
     this.setAuth = this.setAuth.bind(this);
     this.setuserId = this.setuserId.bind(this);
     // this.handleClick = this.handleClick.bind(this);
@@ -39,8 +44,6 @@ class App extends React.Component {
 
   setuserId(input) {
     this.setState({userId: input}, () => {
-      console.log('[index] setUser', this.state.userId);
-
       if (this.state.userId === null) {
         socket.emit('remove user', this.state.userId);
       } else {
@@ -63,18 +66,51 @@ class App extends React.Component {
     this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
   }
 
+  handleMapMounted(map) {
+    // Keep a reference to map object for react-google-maps method
+    this._map = map;
+  }
+
+  handleMapMounted(map) {
+    // Keep a reference to map object for react-google-maps method
+    this._map = map;
+  }
+
+  handleCenterChanged() {
+    console.log('handleCenterChange called');
+    this._map.setCenter({lat: -34, lng: 151});
+  }
+
   handleAllLocationsToggle() {
-    this.setState({displayAllLocations : !this.state.displayAllLocations});
-    console.log('handleAllLocationsToggle clicked');
+    this.setState({displayAllLocations : !this.state.displayAllLocations}, ()=> {
+      var markers = this.toggleLocations().map(function(obj,index){
+        return {
+          lat: obj.coordinates.latitude,
+          lng: obj.coordinates.longitude
+        }
+      });
+
+      var bounds = new google.maps.LatLngBounds();
+      for (var i = 0; i < markers.length; i++) {
+        bounds.extend(markers[i]);
+      }
+      this._map.fitBounds(bounds);
+    });
+
   }
 
   toggleLocations() {
     return this.state.displayAllLocations ? this.state.allMeetingLocations : this.state.meetingLocations;
   }
 
+  handleTransportationChange(event) {
+    console.log('transportation changed', event.target.name);
+    this.setState( {transportation: event.target.name })
+  }
+
   resetMidpoint() {
     this.setState({ midpoint: null }, function() {
-      console.log('midpot was reset to null');
+      console.log('---midpt was reset---');
     });
   }
 
@@ -85,6 +121,11 @@ class App extends React.Component {
 
     socket.on('all meeting locations', (data) => {
       this.setState({ allMeetingLocations: data });
+    });
+
+    socket.on('routePath', (data) => {
+      this.setState({ routePath: data });
+      console.log('routePath', data);
     });
 
     socket.on('match status', (data) => {
@@ -127,18 +168,22 @@ class App extends React.Component {
                       socket = { socket }
                       handleAllLocationsToggle = {this.handleAllLocationsToggle.bind(this) }
                       resetMidpoint = { this.resetMidpoint }
-                      departure_time = { this.state.departure_time }/>
+                      handleTransportationChange={ this.handleTransportationChange }
+                      transportation={ this.state.transportation }/>
+
           <div className="resultsContainer">
             <div className= "mapBox" >
               <div className="subMapBox">
                 <Map
                   socket = { socket }
-                  markers={ this.toggleLocations() }
-                  midpoint={ this.state.midpoint }
-                  center={ this.state.center }
+                  markers = { this.toggleLocations() }
+                  midpoint = { this.state.midpoint }
+                  center = { this.state.center }
                   containerElement={<div style={{height:100+'%'}} />}
                   mapElement={<div style={{height:100+'%'}} />}
-                  handleMarkerClick={this.handleMarkerClick.bind(this)}
+                  handleMarkerClick={ this.handleMarkerClick.bind(this) }
+                  onMapMounted = { this.handleMapMounted }
+                  transportation={  this.state.transportation }
                 />
               </div>
             </div>
