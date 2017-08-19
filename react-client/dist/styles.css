@@ -409,7 +409,6 @@ input:checked + .slider:before {
   z-index: 4;
   cursor: pointer;
   opacity: 0;
-  filter: alpha(opacity=0);
 }
 
 /* set the chat tab/button-looking element as a label */
@@ -419,7 +418,6 @@ input:checked + .slider:before {
   width: 80px;
   line-height: 80px;
   color: white;
-  font-weight: bold;
   border-radius: 80px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   background-color: Snow;
@@ -428,17 +426,15 @@ input:checked + .slider:before {
   background-position: center;
   background-size: 50px;
   text-align: center;
+  transition: all 1s ease;
 }
 
 #chatContainer .chatContainerContent {
   display: none;
+  right: 200px;
   text-align: center;
   background-color: Silver;
-  -moz-border-radius: 20px;
-  -webkit-border-radius: 20px;
   border-radius: 20px; 
-  opacity: 0.85;
-  filter: alpha(opacity=0.85);
   padding: 5px;
 }
 
@@ -448,13 +444,16 @@ input:checked + .slider:before {
 
 /* hover state */
 #chatContainer > input[type="checkbox"]:hover + label{
-  background-color: Snow; 
+  background-color: Snow;
+  transition: opacity 1s;
 }
 
 /* checked state */
 #chatContainer > input[type="checkbox"]:checked + label{
   width: 0;
   height: 0;
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 #chatContainer > input[type="checkbox"]:checked {
@@ -463,6 +462,7 @@ input:checked + .slider:before {
 
 #chatContainer > input[type="checkbox"]:checked ~ .chatContainerContent{
   display: block;
+  opacity: 0.85;
 }
 
 #chatContainer > input[type="checkbox"]:checked + label:before{
@@ -493,15 +493,27 @@ input:checked + .slider:before {
   vertical-align: middle;
 }
 .chatSendButton {
-  width: 12%;
+  width: 15%;
   vertical-align: middle;
-  font-size: 12px;
+  font-size: 16px;
   box-shadow: 0 0px 0px 0;
   margin: 5px;
+  font-weight: bold;
+}
+.chatSendButton:disabled {
+  font-weight: normal;
 }
 
-.listing-body > a {
-  text-decoration: none;
+.chatNotification {
+  display: block;
+  height: 82px;
+  width: 82px;
+  border-radius: 80px;
+  border: 2px solid yellowGreen;
+  position: fixed;
+  right: 28px;
+  bottom: 18px;
+  z-index: 1;
 }
 
 .listing-body > a {
