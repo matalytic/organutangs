@@ -1,5 +1,6 @@
 var express = require('express');
 var Meeting = require('../database-mongo/models/meeting.js');
+var User = require('../database-mongo/models/user.js');
 const router = express.Router();
 const config = require('./config.js');
 var axios = require('axios');
@@ -93,7 +94,7 @@ var routerInstance = function(io) {
                   console.log('coordinates2', coordinates2);
 
                   // send all points
-                  gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime)
+                  gmaps.generatePointsAlong(coordinates1, coordinates2, arrivalTime, transportation)
                     .then(({ pointsAlong, midpoint, departure_time }) => {
 
                       /** send out the departure_time */
@@ -142,7 +143,6 @@ var routerInstance = function(io) {
                   //res.send('Results found.');
                 })
                 .catch(err => console.log("Err getting geocode from Google API"), err);
-
             }
           });
         } else {
@@ -164,6 +164,49 @@ var routerInstance = function(io) {
         }
       })
       .catch(err => console.log("Err getting geocode from Google API", err));
+  });
+
+  router.put('/favorites/:id', function(req, res) {
+    const username = req.params.id;
+    const newLocation = req.body.newLocation;
+    console.log('new location', newLocation);
+    User.saveLocation(username, newLocation, function(err, result){
+      if (err) {
+        console.log('Error posting new location');
+        res.status(401).send('User not found, location not saved');
+      }
+      if (result) {
+        res.status(200).send(result);
+      }
+    });
+  });
+
+  router.get('/favorites/:id', function(req, res) {
+    const username = req.params.id;
+    User.getUserByUsername(username, function(err, user){
+      if (err) { 
+        console.log('Error finding user');
+        res.status(401).send('User not found');
+      }
+      if (user) {
+        res.json(user.savedLocations);
+      }
+    });
+  });
+
+  router.put('/favorites/delete/:id', function(req, res) {
+    const username = req.params.id;
+    const location = req.body.location;
+    console.log('location to remove in router', location);
+    User.removeSavedLocation(username, location, function(err, user){
+      if (err) { 
+        console.log('Error removing location');
+        res.status(401).send('User not found');
+      }
+      if (user) {
+        res.json(user);
+      }
+    });
   });
 
   // TODO Getting the results of the match

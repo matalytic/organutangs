@@ -28,11 +28,13 @@ class App extends React.Component {
       midpoint: { "lat": 40.751094, "lng": -73.987597 },
       center: { "lat": 40.751094, "lng": -73.987597 },
       departure_time: undefined,
-      routePath: []
+      routePath: [],
+      favoriteLocations: {}
     };
 
     this.showSignUp = false;
 
+    this.handleFavoriteClick = this.handleFavoriteClick.bind(this);
     this.handleTransportationChange = this.handleTransportationChange.bind(this);
     this.toggleLocations = this.toggleLocations.bind(this);
     this.handleMapMounted = this.handleMapMounted.bind(this);
@@ -66,6 +68,29 @@ class App extends React.Component {
     this.setState({center: {"lat": item.coordinates.latitude, "lng": item.coordinates.longitude} });
   }
 
+  handleFavoriteClick(item, favoriteStatus) {
+
+    console.log("favorite clicked");
+    console.log('status', favoriteStatus);
+    if (!favoriteStatus) {
+      const newFavorites = Object.assign(this.state.favoriteLocations, {[item.id]: item});
+      this.setState({favoriteLocations: newFavorites});
+      axios.put(`/favorites/${this.state.userId}`, {
+        newLocation: item
+      })
+        .catch(err => console.log(err));
+    } else {
+      console.log(item.id);
+      const newFavorites = Object.assign({}, this.state.favoriteLocations);
+      delete newFavorites[item.id];
+      this.setState({favoriteLocations: newFavorites});
+      axios.put(`/favorites/delete/${this.state.userId}`, {
+        location: item.id
+      })
+        .catch(err => console.log(err));
+    }
+  }
+
   handleMapMounted(map) {
     // Keep a reference to map object for react-google-maps method
     this._map = map;
@@ -96,7 +121,6 @@ class App extends React.Component {
       }
       this._map.fitBounds(bounds);
     });
-
   }
 
   toggleLocations() {
@@ -115,6 +139,13 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    axios.get(`/favorites/${this.state.userId}`)
+      .then((favoriteLocations) => {
+        console.log('all favorite locations: ', favoriteLocations.data);
+        this.setState( { favoriteLocations: favoriteLocations.data });
+      })
+      .catch(err => console.log(err));
+
     socket.on('mid meeting locations', (data) => {
       this.setState({ meetingLocations: data });
     });
@@ -188,7 +219,12 @@ class App extends React.Component {
               </div>
             </div>
             <div className="listContainer">
-              <List handleClick={this.handleListClick.bind(this)} items={ this.toggleLocations() }/>
+              <List 
+                handleClick={this.handleListClick.bind(this)} 
+                items={ this.toggleLocations()  }
+                favoriteLocations={ this.state.favoriteLocations }
+                handleFavoriteClick={this.handleFavoriteClick}
+              />
             </div>
           </div>
         </div>

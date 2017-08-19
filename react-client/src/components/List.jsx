@@ -6,7 +6,13 @@ const List = (props) => (
     <div className="yelp-list">
       
       {props.items.map((item, index) => 
-      	<ListItem listKey={index} handleClick={props.handleClick} item={item}/>)
+      	<ListItem 
+          listKey={index} 
+          handleClick={props.handleClick} 
+          item={item}
+          favorited={!!props.favoriteLocations[item.id]}
+          handleFavoriteClick={props.handleFavoriteClick}
+          />)
       }
     </div>
   </div>
