@@ -21,17 +21,19 @@ class ChatContainer extends React.Component {
     // if there is a match, the socket will let us know the room and the status message
     this.props.socket.on('match status', (data) => {
 
-      // get the toUser and fromUser from the matchRoom name
-      var names = data.matchRoom.split('-');
-      var fromUserIndex = names.indexOf(this.props.userId);
-      var toUserIndex = fromUserIndex === 0 ? 1 : 0;
-      var toUsername = names[toUserIndex];
+      if (data.statusMessage === "Your match was found!") {
+        // get the toUser and fromUser from the matchRoom name
+        var names = data.matchRoom.split('-');
+        var fromUserIndex = names.indexOf(this.props.userId);
+        var toUserIndex = fromUserIndex === 0 ? 1 : 0;
+        var toUsername = names[toUserIndex];
 
-      this.setState({ 
-        status : data.statusMessage,
-        matchRoom: data.matchRoom,
-        matchUser: toUsername
-      });
+        this.setState({ 
+          status : data.statusMessage,
+          matchRoom: data.matchRoom,
+          matchUser: toUsername
+        });
+      }
     });
 
     // Listen for the room's chat data
