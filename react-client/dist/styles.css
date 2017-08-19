@@ -551,10 +551,18 @@ svg.favorite-icon {
   fill: #000000;
   height: 32px; 
   width: 32px;
+  margin-top: 20px;
+  margin-left: 50px
+}
+
+svg.favorite-icon:active {
+  height: 28px;
 }
 
 svg.favorite-icon.favorite-active {
   fill: #ff5e5e;
 }
+
+
 
 
