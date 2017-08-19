@@ -9,16 +9,17 @@ class ChatContainer extends React.Component {
       chatMessagesDisplay: [],
       matchRoom: '',
       shouldBeHidden: true,
-      matchUser: ''
+      matchUser: '',
+      newMessage: false
     };
+
+    this.handleToggleChat = this.handleToggleChat.bind(this);
   }
 
   componentDidMount() {
 
     // if there is a match, the socket will let us know the room and the status message
     this.props.socket.on('match status', (data) => {
-
-      console.log('[Chat listen on matchstatus]. SOCKET data.', data);
 
       // get the toUser and fromUser from the matchRoom name
       var names = data.matchRoom.split('-');
@@ -35,8 +36,7 @@ class ChatContainer extends React.Component {
 
     // Listen for the room's chat data
     this.props.socket.on('chat', (chatData) => {
-      console.log('[Chat listen on chat]. Receive chat:', chatData);
-      
+
       // if database sends back an array of messages
       if (Array.isArray(chatData)) {
 
@@ -65,6 +65,11 @@ class ChatContainer extends React.Component {
         this.setState({ chatMessagesDisplay: updatedChats });
 
         this.chatDiv.scrollTop = this.chatDiv.scrollHeight;
+
+        // if the chat window is currently closed, update newMessage state
+        if (this.isChatToggled.checked === false) {
+          this.setState({ newMessage: true });
+        }
       }
 
     });
@@ -93,11 +98,18 @@ class ChatContainer extends React.Component {
     this.sendMessageButton.disabled = true;
   }
 
-  handleTypeMessage(e) {;
+  handleTypeMessage(e) {
     if (e.target.value === "") {
       this.sendMessageButton.disabled = true;
     } else {
       this.sendMessageButton.disabled = false;
+    }
+  }
+
+  handleToggleChat() {
+    if (this.isChatToggled.checked === true) {
+      this.setState({newMessage : false});
+      this.chatDiv.scrollTop = this.chatDiv.scrollHeight;
     }
   }
 
@@ -122,8 +134,13 @@ class ChatContainer extends React.Component {
     } else {
       return (
         <div id="chatContainer">
-          <input type="checkbox" />
+          <input type="checkbox" 
+                 ref={ checkboxInput => this.isChatToggled = checkboxInput }
+                 onChange = { this.handleToggleChat } />
           <label data-expanded="" data-collapsed=""></label>
+          { this.state.newMessage === true && 
+            <div className="chatNotification"></div>
+          }
           <div className="chatContainerContent">
             <div>{ chatTitle }</div>
             <div className="chatMessageDisplay" ref={ chatDiv => { this.chatDiv = chatDiv; }}>
